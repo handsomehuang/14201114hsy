@@ -1,10 +1,11 @@
 package com.nchu.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -15,12 +16,15 @@ import java.util.Set;
  * 订单实体类
  */
 @Entity
-public class Order implements Serializable{
+@DynamicInsert
+@DynamicUpdate
+@Table(name = "orders")
+public class Order implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private long id;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     private User user;
@@ -77,7 +81,7 @@ public class Order implements Serializable{
     }
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -87,7 +91,7 @@ public class Order implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -97,7 +101,7 @@ public class Order implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_modified", nullable = false)
+    @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -107,7 +111,7 @@ public class Order implements Serializable{
     }
 
     @Basic
-    @Column(name = "price", nullable = false, precision = 2)
+    @Column(name = "price", precision = 2)
     public BigDecimal getPrice() {
         return price;
     }
@@ -127,7 +131,7 @@ public class Order implements Serializable{
     }
 
     @Basic
-    @Column(name = "remark", nullable = false, length = 255)
+    @Column(name = "remark", length = 255)
     public String getRemark() {
         return remark;
     }

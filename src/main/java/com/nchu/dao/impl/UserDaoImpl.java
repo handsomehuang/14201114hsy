@@ -6,14 +6,32 @@ import com.nchu.entity.User;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 2017年9月20日08:10:27
  * 用户DAO层实现类
  */
 @Repository
+@Transactional
 public class UserDaoImpl implements UserDao {
+    @Autowired
+    SessionFactory sessionFactory;
+
+    /**
+     * 获取Hibernate 的session
+     *
+     * @return
+     */
+    private Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
+
     /**
      * 登录校验,传入use对象(只有账号和密码数据),
      * 查找比对用户账户密码信息,
@@ -24,6 +42,7 @@ public class UserDaoImpl implements UserDao {
      */
     @Override
     public User LoginCheck(User user) {
+
         return null;
     }
 
@@ -34,8 +53,10 @@ public class UserDaoImpl implements UserDao {
      * @return 主键
      */
     @Override
-    public Integer save(User model) {
-        return null;
+    public Long save(User model) {
+        System.out.println(model.getAccount());
+        getSession().save(model);
+        return model.getId();
     }
 
     /**
@@ -74,7 +95,7 @@ public class UserDaoImpl implements UserDao {
      * @param id
      */
     @Override
-    public void delete(Integer id) {
+    public void delete(Long id) {
 
     }
 
@@ -105,8 +126,9 @@ public class UserDaoImpl implements UserDao {
      * @return 实体对象
      */
     @Override
-    public User get(Integer id) {
-        return null;
+    public User get(Long id) {
+        User user = (User) getSession().get(User.class, id);
+        return user;
     }
 
     /**
@@ -126,6 +148,11 @@ public class UserDaoImpl implements UserDao {
      */
     @Override
     public List<User> listAll() {
+        Query query = getSession().createQuery("from User ");
+        List<User> userList = query.list();
+        for (User user : userList) {
+            System.out.println("user:" + user.getNickName());
+        }
         return null;
     }
 
@@ -156,6 +183,7 @@ public class UserDaoImpl implements UserDao {
     public List<User> searchPageByOrder(Map<String, Object> conditions, String orderBy, String order, int page, int pageSize) {
         return null;
     }
+
     @Override
     public List<User> searchListDefined(String HQL) {
         return null;
@@ -168,7 +196,7 @@ public class UserDaoImpl implements UserDao {
      * @return 返回判断结果
      */
     @Override
-    public boolean exists(Integer id) {
+    public boolean exists(Long id) {
         return false;
     }
 }

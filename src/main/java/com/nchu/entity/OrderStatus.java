@@ -1,5 +1,8 @@
 package com.nchu.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 
 import java.io.Serializable;
@@ -10,19 +13,21 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = "order_status")
-public class OrderStatus implements Serializable{
+@DynamicInsert
+@DynamicUpdate
+public class OrderStatus implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private long id;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     private String flag;
     private String description;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -32,7 +37,7 @@ public class OrderStatus implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -42,7 +47,7 @@ public class OrderStatus implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_modified", nullable = false)
+    @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -52,7 +57,7 @@ public class OrderStatus implements Serializable{
     }
 
     @Basic
-    @Column(name = "flag", nullable = false, length = 255)
+    @Column(name = "flag", length = 255)
     public String getFlag() {
         return flag;
     }

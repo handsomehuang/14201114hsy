@@ -8,7 +8,7 @@ import java.io.Serializable;
  * 2017年9月20日08:31:07
  * 商品DAO接口
  */
-public interface GoodsDao extends BaseDao<Goods,Integer> {
+public interface GoodsDao extends BaseDao<Goods,Long> {
     /**
      * 下架指定店铺中的全部商品,即更改商品状态为已下架
      *

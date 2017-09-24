@@ -1,7 +1,8 @@
 package com.nchu.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
-
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -10,12 +11,14 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = "after_sale")
-public class AfterSale implements Serializable{
+@DynamicInsert
+@DynamicUpdate
+public class AfterSale implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private long id;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     private String title;
@@ -38,7 +41,7 @@ public class AfterSale implements Serializable{
     }
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -48,7 +51,7 @@ public class AfterSale implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -58,7 +61,7 @@ public class AfterSale implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_modified", nullable = false)
+    @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -68,7 +71,7 @@ public class AfterSale implements Serializable{
     }
 
     @Basic
-    @Column(name = "title", nullable = false, length = 255)
+    @Column(name = "title", length = 255)
     public String getTitle() {
         return title;
     }
@@ -78,7 +81,7 @@ public class AfterSale implements Serializable{
     }
 
     @Basic
-    @Column(name = "description", nullable = false, length = 255)
+    @Column(name = "description", length = 255)
     public String getDescription() {
         return description;
     }
@@ -88,7 +91,7 @@ public class AfterSale implements Serializable{
     }
 
     @Basic
-    @Column(name = "service_status", nullable = false)
+    @Column(name = "service_status")
     public int getServiceStatus() {
         return serviceStatus;
     }
@@ -96,6 +99,7 @@ public class AfterSale implements Serializable{
     public void setServiceStatus(int serviceStatus) {
         this.serviceStatus = serviceStatus;
     }
+
     @ManyToOne
     @JoinColumn(name = "handle_person")
     public User getHandlePerson() {

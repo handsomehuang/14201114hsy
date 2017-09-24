@@ -1,0 +1,23 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost/benefitgo?characterEncoding=utf-8"/>
+        <property name="username" value="root"/>
+        <property name="password" value="1320074071"/>
+    </bean>
+
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
+          lazy-init="false">
+        <!-- 注入datasource，给sessionfactoryBean内setdatasource提供数据源 -->
+        <property name="dataSource" ref="dataSource"/>
+        <!--指定hibernate配置文件路径-->
+        <property name="configLocation" value="classpath:hibernate/hibernate.cfg.xml"/>
+        <!--配置hibernate实体映射类包,避免一个个单独添加-->
+        <property name="packagesToScan" value="com.nchu.entity"/>
+    </bean>
+
+</beans>

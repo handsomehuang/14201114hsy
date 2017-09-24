@@ -2,17 +2,34 @@ package com.nchu.dao.impl;
 
 import com.nchu.dao.VouchersDao;
 import com.nchu.entity.Vouchers;
+
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 2017年9月20日13:57:19
  * 优惠券Dao实现
  */
 @Repository
+@Transactional
 public class VouchersDaoImpl implements VouchersDao {
+    @Autowired
+    SessionFactory sessionFactory;
+    /**
+     * 获取Hibernate 的session
+     *
+     * @return
+     */
+    private Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
+
     /**
      * 保存一个对象到数据库
      *
@@ -20,7 +37,8 @@ public class VouchersDaoImpl implements VouchersDao {
      * @return 主键
      */
     @Override
-    public Integer save(Vouchers model) {
+    public Long save(Vouchers model) {
+        getSession().save(model);
         return null;
     }
 
@@ -31,7 +49,7 @@ public class VouchersDaoImpl implements VouchersDao {
      */
     @Override
     public void saveOrUpdate(Vouchers model) {
-
+        getSession().save(model);
     }
 
     /**
@@ -60,7 +78,7 @@ public class VouchersDaoImpl implements VouchersDao {
      * @param id
      */
     @Override
-    public void delete(Integer id) {
+    public void delete(Long id) {
 
     }
 
@@ -91,7 +109,7 @@ public class VouchersDaoImpl implements VouchersDao {
      * @return 实体对象
      */
     @Override
-    public Vouchers get(Integer id) {
+    public Vouchers get(Long id) {
         return null;
     }
 
@@ -161,7 +179,7 @@ public class VouchersDaoImpl implements VouchersDao {
      * @return 返回判断结果
      */
     @Override
-    public boolean exists(Integer id) {
+    public boolean exists(Long id) {
         return false;
     }
 }

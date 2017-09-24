@@ -24,6 +24,10 @@ public enum OrderStatus {
      */
     ORDER_PAY,
     /**
+     * 订单已发货
+     */
+    ORDER_SENDOUT,
+    /**
      * 订单创建成功，用户主动取消
      */
     ORDER_CANCEL,

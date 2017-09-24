@@ -5,14 +5,30 @@ import com.nchu.entity.Shop;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 2017年9月20日09:19:23
  * 店铺Doa实现类
  */
 @Repository
+@Transactional
 public class ShopDaoImpl implements ShopDao {
+    @Autowired
+    SessionFactory sessionFactory;
+    /**
+     * 获取Hibernate 的session
+     *
+     * @return
+     */
+    private Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
+
     /**
      * 保存一个对象到数据库
      *
@@ -20,7 +36,7 @@ public class ShopDaoImpl implements ShopDao {
      * @return 主键
      */
     @Override
-    public Integer save(Shop model) {
+    public Long save(Shop model) {
         return null;
     }
 
@@ -60,7 +76,7 @@ public class ShopDaoImpl implements ShopDao {
      * @param id
      */
     @Override
-    public void delete(Integer id) {
+    public void delete(Long id) {
 
     }
 
@@ -91,7 +107,7 @@ public class ShopDaoImpl implements ShopDao {
      * @return 实体对象
      */
     @Override
-    public Shop get(Integer id) {
+    public Shop get(Long id) {
         return null;
     }
 
@@ -161,7 +177,7 @@ public class ShopDaoImpl implements ShopDao {
      * @return 返回判断结果
      */
     @Override
-    public boolean exists(Integer id) {
+    public boolean exists(Long id) {
         return false;
     }
 }

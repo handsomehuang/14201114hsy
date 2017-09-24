@@ -11,7 +11,7 @@ import java.util.Map;
  * @param <Entity> 要操作的实体对象
  * @param <PK>     表的主键
  */
-public interface BaseDao<Entity extends Serializable, PK extends Serializable> {
+public interface BaseDao<Entity extends Serializable, PK extends Long> {
 
     /**
      * 保存一个对象到数据库

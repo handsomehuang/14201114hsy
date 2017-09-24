@@ -1,5 +1,8 @@
 package com.nchu.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 
 import java.io.Serializable;
@@ -9,12 +12,14 @@ import java.sql.Timestamp;
  * 收藏表实体
  */
 @Entity
-public class Favorites implements Serializable{
+@DynamicInsert
+@DynamicUpdate
+public class Favorites implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private long id;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     /*收藏记录所属的用户*/
@@ -23,6 +28,7 @@ public class Favorites implements Serializable{
     private Goods goods;
     /*记录是否有效*/
     private boolean isDeleted;
+
     @ManyToOne
     @JoinColumn(name = "goodsid")
     public Goods getGoods() {
@@ -44,7 +50,7 @@ public class Favorites implements Serializable{
     }
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -54,7 +60,7 @@ public class Favorites implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -64,7 +70,7 @@ public class Favorites implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_modified", nullable = false)
+    @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -74,7 +80,7 @@ public class Favorites implements Serializable{
     }
 
     @Basic
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "isDeleted")
     public boolean isDeleted() {
         return isDeleted;
     }

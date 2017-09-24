@@ -10,7 +10,7 @@ import java.util.List;
  * 2017年9月20日08:35:29
  * 消息表DAO接口
  */
-public interface MessageDao extends BaseDao<Message,Integer> {
+public interface MessageDao extends BaseDao<Message,Long> {
     /**
      * 获取指定用户的指定类型的消息
      *

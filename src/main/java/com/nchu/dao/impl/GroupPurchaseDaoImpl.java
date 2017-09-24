@@ -4,14 +4,30 @@ import com.nchu.entity.GroupPurchase;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 2017年9月20日10:11:11
  * 参团表Dao实现类
  */
 @Repository
+@Transactional
 public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
+    @Autowired
+    SessionFactory sessionFactory;
+    /**
+     * 获取Hibernate 的session
+     *
+     * @return
+     */
+    private Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
+
     /**
      * 保存一个对象到数据库
      *
@@ -19,7 +35,7 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      * @return 主键
      */
     @Override
-    public Integer save(GroupPurchase model) {
+    public Long save(GroupPurchase model) {
         return null;
     }
 
@@ -59,7 +75,7 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      * @param id
      */
     @Override
-    public void delete(Integer id) {
+    public void delete(Long id) {
 
     }
 
@@ -90,7 +106,7 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      * @return 实体对象
      */
     @Override
-    public GroupPurchase get(Integer id) {
+    public GroupPurchase get(Long id) {
         return null;
     }
 
@@ -160,7 +176,7 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      * @return 返回判断结果
      */
     @Override
-    public boolean exists(Integer id) {
+    public boolean exists(Long id) {
         return false;
     }
 }

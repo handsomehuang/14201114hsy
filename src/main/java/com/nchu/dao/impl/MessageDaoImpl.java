@@ -8,14 +8,30 @@ import com.nchu.enumdef.MessageType;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 2017年9月20日09:04:37
  * 消息DAO实现类
  */
 @Repository
+@Transactional
 public class MessageDaoImpl implements MessageDao {
+    @Autowired
+    SessionFactory sessionFactory;
+    /**
+     * 获取Hibernate 的session
+     *
+     * @return
+     */
+    private Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
+
     /**
      * 获取指定用户的指定类型的消息
      *
@@ -47,7 +63,7 @@ public class MessageDaoImpl implements MessageDao {
      * @return 主键
      */
     @Override
-    public Integer save(Message model) {
+    public Long save(Message model) {
         return null;
     }
 
@@ -87,7 +103,7 @@ public class MessageDaoImpl implements MessageDao {
      * @param id
      */
     @Override
-    public void delete(Integer id) {
+    public void delete(Long id) {
 
     }
 
@@ -118,7 +134,7 @@ public class MessageDaoImpl implements MessageDao {
      * @return 实体对象
      */
     @Override
-    public Message get(Integer id) {
+    public Message get(Long id) {
         return null;
     }
 
@@ -188,7 +204,7 @@ public class MessageDaoImpl implements MessageDao {
      * @return 返回判断结果
      */
     @Override
-    public boolean exists(Integer id) {
+    public boolean exists(Long id) {
         return false;
     }
 }

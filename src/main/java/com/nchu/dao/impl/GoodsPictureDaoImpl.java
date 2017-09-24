@@ -5,9 +5,26 @@ import com.nchu.entity.GoodsPicture;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 @Repository
+@Transactional
 public class GoodsPictureDaoImpl implements GoodsPictureDao {
+    @Autowired
+    SessionFactory sessionFactory;
+    /**
+     * 获取Hibernate 的session
+     *
+     * @return
+     */
+    private Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
+
     /**
      * 保存一个对象到数据库
      *
@@ -15,7 +32,7 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      * @return 主键
      */
     @Override
-    public Integer save(GoodsPicture model) {
+    public Long save(GoodsPicture model) {
         return null;
     }
 
@@ -55,7 +72,7 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      * @param id
      */
     @Override
-    public void delete(Integer id) {
+    public void delete(Long id) {
 
     }
 
@@ -86,7 +103,7 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      * @return 实体对象
      */
     @Override
-    public GoodsPicture get(Integer id) {
+    public GoodsPicture get(Long id) {
         return null;
     }
 
@@ -156,7 +173,7 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      * @return 返回判断结果
      */
     @Override
-    public boolean exists(Integer id) {
+    public boolean exists(Long id) {
         return false;
     }
 }

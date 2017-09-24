@@ -1,5 +1,8 @@
 package com.nchu.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 
 import java.io.Serializable;
@@ -9,12 +12,14 @@ import java.sql.Timestamp;
  * 商品评价表实体类
  */
 @Entity
-public class Evaluation implements Serializable{
+@DynamicInsert
+@DynamicUpdate
+public class Evaluation implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private long id;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     /*评论人*/
@@ -45,7 +50,7 @@ public class Evaluation implements Serializable{
     }
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -55,7 +60,7 @@ public class Evaluation implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -65,7 +70,7 @@ public class Evaluation implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_modified", nullable = false)
+    @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -75,7 +80,7 @@ public class Evaluation implements Serializable{
     }
 
     @Basic
-    @Column(name = "score", nullable = false)
+    @Column(name = "score")
     public int getScore() {
         return score;
     }
@@ -85,7 +90,7 @@ public class Evaluation implements Serializable{
     }
 
     @Basic
-    @Column(name = "content", nullable = false, length = 255)
+    @Column(name = "content", length = 255)
     public String getContent() {
         return content;
     }

@@ -1,5 +1,7 @@
 package com.nchu.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -15,12 +17,14 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "group_purchase")
-public class GroupPurchase implements Serializable{
+@DynamicInsert
+@DynamicUpdate
+public class GroupPurchase implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private long id;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     /*开启团购活动的商家*/
@@ -40,7 +44,7 @@ public class GroupPurchase implements Serializable{
     private String description;
     /*参团记录表*/
     private Set<ParticipateGroup> participateGroup = new HashSet<>();
-    
+
     @OneToMany(mappedBy = "groupPurchase")
     @LazyCollection(LazyCollectionOption.EXTRA)
     public Set<ParticipateGroup> getParticipateGroup() {
@@ -85,7 +89,7 @@ public class GroupPurchase implements Serializable{
     }
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -95,7 +99,7 @@ public class GroupPurchase implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -105,7 +109,7 @@ public class GroupPurchase implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_modified", nullable = false)
+    @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -115,7 +119,7 @@ public class GroupPurchase implements Serializable{
     }
 
     @Basic
-    @Column(name = "min_participants", nullable = false)
+    @Column(name = "min_participants")
     public long getMinParticipants() {
         return minParticipants;
     }
@@ -125,7 +129,7 @@ public class GroupPurchase implements Serializable{
     }
 
     @Basic
-    @Column(name = "max_participants", nullable = false)
+    @Column(name = "max_participants")
     public long getMaxParticipants() {
         return maxParticipants;
     }
@@ -135,7 +139,7 @@ public class GroupPurchase implements Serializable{
     }
 
     @Basic
-    @Column(name = "start_time", nullable = false)
+    @Column(name = "start_time")
     public Timestamp getStartTime() {
         return startTime;
     }
@@ -145,7 +149,7 @@ public class GroupPurchase implements Serializable{
     }
 
     @Basic
-    @Column(name = "end_time", nullable = false)
+    @Column(name = "end_time")
     public Timestamp getEndTime() {
         return endTime;
     }
@@ -155,7 +159,7 @@ public class GroupPurchase implements Serializable{
     }
 
     @Basic
-    @Column(name = "iseffective", nullable = false)
+    @Column(name = "iseffective")
     public boolean isIseffective() {
         return iseffective;
     }

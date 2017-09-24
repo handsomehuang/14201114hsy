@@ -5,13 +5,30 @@ import com.nchu.entity.ExpressDelivery;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * 2017年9月20日10:14:25
  * 快递表DAO实现类
  */
 @Repository
+@Transactional
 public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
+    @Autowired
+    SessionFactory sessionFactory;
+    /**
+     * 获取Hibernate 的session
+     *
+     * @return
+     */
+    private Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
+
     /**
      * 保存一个对象到数据库
      *
@@ -19,7 +36,7 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      * @return 主键
      */
     @Override
-    public Integer save(ExpressDelivery model) {
+    public Long save(ExpressDelivery model) {
         return null;
     }
 
@@ -59,7 +76,7 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      * @param id
      */
     @Override
-    public void delete(Integer id) {
+    public void delete(Long id) {
 
     }
 
@@ -90,7 +107,7 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      * @return 实体对象
      */
     @Override
-    public ExpressDelivery get(Integer id) {
+    public ExpressDelivery get(Long id) {
         return null;
     }
 
@@ -160,7 +177,7 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      * @return 返回判断结果
      */
     @Override
-    public boolean exists(Integer id) {
+    public boolean exists(Long id) {
         return false;
     }
 }

@@ -1,11 +1,13 @@
 package com.nchu.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -15,12 +17,14 @@ import java.util.Set;
  * 用户表对应实体类
  */
 @Entity
+@DynamicInsert
+@DynamicUpdate
 public class User implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private long id;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private long id;
     private String account;
     private String password;
     private String relname;
@@ -33,7 +37,7 @@ public class User implements Serializable {
     private String role;
     private Boolean islocked;
     private long integral;
-    private BigInteger balance;
+    private BigDecimal balance;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     private String checkcode;
@@ -169,7 +173,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "nickName", nullable = false, length = 50)
+    @Column(name = "nickName", length = 50)
     public String getNickName() {
         return nickName;
     }
@@ -199,7 +203,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "headportrait", nullable = true, length = 255)
+    @Column(name = "headportrait",length = 255)
     public String getHeadportrait() {
         return headportrait;
     }
@@ -209,7 +213,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "sex", nullable = false)
+    @Column(name = "sex")
     public boolean isSex() {
         return sex;
     }
@@ -219,7 +223,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "birthday", nullable = true)
+    @Column(name = "birthday")
     public Date getBirthday() {
         return birthday;
     }
@@ -229,7 +233,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "role", nullable = false, length = 20)
+    @Column(name = "role", length = 20)
     public String getRole() {
         return role;
     }
@@ -239,7 +243,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "islocked", nullable = true)
+    @Column(name = "islocked")
     public Boolean getIslocked() {
         return islocked;
     }
@@ -249,7 +253,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "integral", nullable = false)
+    @Column(name = "integral")
     public long getIntegral() {
         return integral;
     }
@@ -259,12 +263,12 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "balance", nullable = false, precision = 0)
-    public BigInteger getBalance() {
+    @Column(name = "balance", precision = 2)
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(BigInteger balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 
@@ -279,7 +283,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "gmt_modified", nullable = true)
+    @Column(name = "gmt_modified", nullable = false)
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -299,7 +303,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "isVerification", nullable = false)
+    @Column(name = "isVerification")
     public boolean isVerification() {
         return isVerification;
     }
@@ -309,7 +313,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "isLogin", nullable = false)
+    @Column(name = "isLogin")
     public boolean isLogin() {
         return isLogin;
     }
@@ -322,9 +326,7 @@ public class User implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         User user = (User) o;
-
         if (id != user.id) return false;
         if (sex != user.sex) return false;
         if (integral != user.integral) return false;
@@ -344,7 +346,6 @@ public class User implements Serializable {
         if (gmtCreate != null ? !gmtCreate.equals(user.gmtCreate) : user.gmtCreate != null) return false;
         if (gmtModified != null ? !gmtModified.equals(user.gmtModified) : user.gmtModified != null) return false;
         if (checkcode != null ? !checkcode.equals(user.checkcode) : user.checkcode != null) return false;
-
         return true;
     }
 

@@ -1,10 +1,11 @@
 package com.nchu.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -14,12 +15,14 @@ import java.util.Set;
  * 店铺表实体类
  */
 @Entity
-public class Shop implements Serializable{
+@DynamicInsert
+@DynamicUpdate
+public class Shop implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private long id;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private long id;
     /*店铺所有者*/
     private User user;
     private Timestamp gmtCreate;
@@ -61,7 +64,7 @@ public class Shop implements Serializable{
     }
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -72,7 +75,7 @@ public class Shop implements Serializable{
 
 
     @Basic
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -82,7 +85,7 @@ public class Shop implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_modified", nullable = true)
+    @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -92,7 +95,7 @@ public class Shop implements Serializable{
     }
 
     @Basic
-    @Column(name = "name", nullable = false, length = 255)
+    @Column(name = "name", length = 255)
     public String getName() {
         return name;
     }
@@ -102,7 +105,7 @@ public class Shop implements Serializable{
     }
 
     @Basic
-    @Column(name = "addresss", nullable = true, length = 255)
+    @Column(name = "addresss", length = 255)
     public String getAddresss() {
         return addresss;
     }
@@ -112,7 +115,7 @@ public class Shop implements Serializable{
     }
 
     @Basic
-    @Column(name = "serviceTel", nullable = false, length = 50)
+    @Column(name = "serviceTel", length = 50)
     public String getServiceTel() {
         return serviceTel;
     }
@@ -132,7 +135,7 @@ public class Shop implements Serializable{
     }
 
     @Basic
-    @Column(name = "isVerify", nullable = false)
+    @Column(name = "isVerify")
     public byte getIsVerify() {
         return isVerify;
     }
@@ -142,7 +145,7 @@ public class Shop implements Serializable{
     }
 
     @Basic
-    @Column(name = "license_code", nullable = false, length = 255)
+    @Column(name = "license_code", length = 255)
     public String getLicenseCode() {
         return licenseCode;
     }
@@ -152,7 +155,7 @@ public class Shop implements Serializable{
     }
 
     @Basic
-    @Column(name = "license_pic", nullable = false, length = 255)
+    @Column(name = "license_pic", length = 255)
     public String getLicensePic() {
         return licensePic;
     }
@@ -162,7 +165,7 @@ public class Shop implements Serializable{
     }
 
     @Basic
-    @Column(name = "logo", nullable = true, length = 255)
+    @Column(name = "logo", length = 255)
     public String getLogo() {
         return logo;
     }
@@ -172,7 +175,7 @@ public class Shop implements Serializable{
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 255)
+    @Column(name = "description", length = 255)
     public String getDescription() {
         return description;
     }
@@ -182,7 +185,7 @@ public class Shop implements Serializable{
     }
 
     @Basic
-    @Column(name = "islocked", nullable = false)
+    @Column(name = "islocked")
     public boolean isIslocked() {
         return islocked;
     }

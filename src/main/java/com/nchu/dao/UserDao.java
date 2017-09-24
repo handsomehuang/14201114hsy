@@ -8,7 +8,7 @@ import com.nchu.entity.User;
  * @author xjw
  * 用户DAO接口,继承基础DAO接口并进行扩展
  */
-public interface UserDao extends BaseDao<User, Integer> {
+public interface UserDao extends BaseDao<User, Long> {
 
     /**
      * 登录校验,传入use对象(只有账号和密码数据),

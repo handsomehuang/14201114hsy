@@ -1,5 +1,8 @@
 package com.nchu.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 
 import java.io.Serializable;
@@ -10,12 +13,14 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = "receiving_address")
-public class ReceivingAddress implements Serializable{
+@DynamicInsert
+@DynamicUpdate
+public class ReceivingAddress implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private long id;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private long id;
     private User user;
     private String name;
     private String tel;
@@ -34,7 +39,7 @@ public class ReceivingAddress implements Serializable{
     }
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -45,7 +50,7 @@ public class ReceivingAddress implements Serializable{
 
 
     @Basic
-    @Column(name = "name", nullable = false, length = 25)
+    @Column(name = "name", length = 25)
     public String getName() {
         return name;
     }
@@ -55,7 +60,7 @@ public class ReceivingAddress implements Serializable{
     }
 
     @Basic
-    @Column(name = "tel", nullable = false, length = 25)
+    @Column(name = "tel", length = 25)
     public String getTel() {
         return tel;
     }
@@ -65,7 +70,7 @@ public class ReceivingAddress implements Serializable{
     }
 
     @Basic
-    @Column(name = "address", nullable = false, length = 255)
+    @Column(name = "address", length = 255)
     public String getAddress() {
         return address;
     }
@@ -75,7 +80,7 @@ public class ReceivingAddress implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -85,7 +90,7 @@ public class ReceivingAddress implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_modify", nullable = true)
+    @Column(name = "gmt_modify")
     public Timestamp getGmtModify() {
         return gmtModify;
     }

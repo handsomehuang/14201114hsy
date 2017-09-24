@@ -1,5 +1,8 @@
 package com.nchu.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 
 import java.io.Serializable;
@@ -10,12 +13,14 @@ import java.sql.Timestamp;
  * 优惠券表实体类
  */
 @Entity
-public class Vouchers implements Serializable{
+@DynamicInsert
+@DynamicUpdate
+public class Vouchers implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private long id;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     /*持有人*/
@@ -30,7 +35,7 @@ public class Vouchers implements Serializable{
     private boolean isused;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -40,7 +45,7 @@ public class Vouchers implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -50,7 +55,7 @@ public class Vouchers implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_modified", nullable = false)
+    @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -70,7 +75,7 @@ public class Vouchers implements Serializable{
     }
 
     @Basic
-    @Column(name = "seriacod", nullable = false, length = 255)
+    @Column(name = "seriacod", length = 255)
     public String getSeriacod() {
         return seriacod;
     }
@@ -80,7 +85,7 @@ public class Vouchers implements Serializable{
     }
 
     @Basic
-    @Column(name = "indate", nullable = false)
+    @Column(name = "indate")
     public Timestamp getIndate() {
         return indate;
     }
@@ -90,7 +95,7 @@ public class Vouchers implements Serializable{
     }
 
     @Basic
-    @Column(name = "price", nullable = false, precision = 2)
+    @Column(name = "price", precision = 2)
     public BigDecimal getPrice() {
         return price;
     }
@@ -100,7 +105,7 @@ public class Vouchers implements Serializable{
     }
 
     @Basic
-    @Column(name = "limituse", nullable = false, precision = 2)
+    @Column(name = "limituse", precision = 2)
     public BigDecimal getLimituse() {
         return limituse;
     }
@@ -110,7 +115,7 @@ public class Vouchers implements Serializable{
     }
 
     @Basic
-    @Column(name = "status", nullable = false, length = 20)
+    @Column(name = "status", length = 20)
     public String getStatus() {
         return status;
     }
@@ -120,7 +125,7 @@ public class Vouchers implements Serializable{
     }
 
     @Basic
-    @Column(name = "isused", nullable = false)
+    @Column(name = "isused")
     public boolean isIsused() {
         return isused;
     }

@@ -1,5 +1,8 @@
 package com.nchu.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 
 import java.io.Serializable;
@@ -9,12 +12,14 @@ import java.sql.Timestamp;
  * 消息记录表实体
  */
 @Entity
-public class Message implements Serializable{
+@DynamicInsert
+@DynamicUpdate
+public class Message implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private long id;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     /*发送人*/
@@ -47,7 +52,7 @@ public class Message implements Serializable{
     }
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -57,7 +62,7 @@ public class Message implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -67,7 +72,7 @@ public class Message implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_modified", nullable = false)
+    @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -77,7 +82,7 @@ public class Message implements Serializable{
     }
 
     @Basic
-    @Column(name = "senderNicke", nullable = false, length = 255)
+    @Column(name = "senderNicke", length = 255)
     public String getSenderNicke() {
         return senderNicke;
     }
@@ -87,7 +92,7 @@ public class Message implements Serializable{
     }
 
     @Basic
-    @Column(name = "type", nullable = false)
+    @Column(name = "type")
     public int getType() {
         return type;
     }
@@ -97,7 +102,7 @@ public class Message implements Serializable{
     }
 
     @Basic
-    @Column(name = "isread", nullable = false)
+    @Column(name = "isread")
     public boolean isIsread() {
         return isread;
     }
@@ -107,7 +112,7 @@ public class Message implements Serializable{
     }
 
     @Basic
-    @Column(name = "isdeleted", nullable = false)
+    @Column(name = "isdeleted")
     public boolean isIsdeleted() {
         return isdeleted;
     }

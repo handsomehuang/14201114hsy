@@ -7,14 +7,30 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 2017年9月20日09:14:39
  * 商品Dao的实现类
  */
 @Repository
+@Transactional
 public class GoodsDaoImpl implements GoodsDao {
+    @Autowired
+    SessionFactory sessionFactory;
+    /**
+     * 获取Hibernate 的session
+     *
+     * @return
+     */
+    private Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
+
     /**
      * 下架指定店铺中的全部商品,即更改商品状态为已下架
      *
@@ -32,7 +48,7 @@ public class GoodsDaoImpl implements GoodsDao {
      * @return 主键
      */
     @Override
-    public Integer save(Goods model) {
+    public Long save(Goods model) {
         return null;
     }
 
@@ -72,7 +88,7 @@ public class GoodsDaoImpl implements GoodsDao {
      * @param id
      */
     @Override
-    public void delete(Integer id) {
+    public void delete(Long id) {
 
     }
 
@@ -103,7 +119,7 @@ public class GoodsDaoImpl implements GoodsDao {
      * @return 实体对象
      */
     @Override
-    public Goods get(Integer id) {
+    public Goods get(Long id) {
         return null;
     }
 
@@ -173,7 +189,7 @@ public class GoodsDaoImpl implements GoodsDao {
      * @return 返回判断结果
      */
     @Override
-    public boolean exists(Integer id) {
+    public boolean exists(Long id) {
         return false;
     }
 }

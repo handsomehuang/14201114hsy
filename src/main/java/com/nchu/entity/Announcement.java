@@ -1,5 +1,8 @@
 package com.nchu.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,12 +15,14 @@ import java.sql.Timestamp;
  * 公告实体类
  */
 @Entity
-public class Announcement implements Serializable{
+@DynamicInsert
+@DynamicUpdate
+public class Announcement implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private long id;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     private String title;
@@ -26,7 +31,7 @@ public class Announcement implements Serializable{
     private String publisherNick;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -36,7 +41,7 @@ public class Announcement implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -46,7 +51,7 @@ public class Announcement implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_modified", nullable = false)
+    @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -56,7 +61,7 @@ public class Announcement implements Serializable{
     }
 
     @Basic
-    @Column(name = "title", nullable = false, length = 255)
+    @Column(name = "title", length = 255)
     public String getTitle() {
         return title;
     }
@@ -66,7 +71,7 @@ public class Announcement implements Serializable{
     }
 
     @Basic
-    @Column(name = "publisher", nullable = false)
+    @Column(name = "publisher")
     public long getPublisher() {
         return publisher;
     }
@@ -76,7 +81,7 @@ public class Announcement implements Serializable{
     }
 
     @Basic
-    @Column(name = "content", nullable = false, length = 255)
+    @Column(name = "content", length = 255)
     public String getContent() {
         return content;
     }

@@ -1,5 +1,8 @@
 package com.nchu.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 
 import java.io.Serializable;
@@ -10,6 +13,8 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = "goods_picture")
+@DynamicInsert
+@DynamicUpdate
 public class GoodsPicture implements Serializable{
     /**
 	 * 

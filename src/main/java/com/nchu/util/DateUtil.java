@@ -1,5 +1,6 @@
 package com.nchu.util;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -28,6 +29,9 @@ public class DateUtil {
         return date;
     }
 
+    public static Timestamp getCurrentTimestamp() {
+        return new Timestamp(System.currentTimeMillis());
+    }
     /*获取给定时间与当前时间相差的小时数,用于确定校验码的有效性*/
     public static long TheHourUpToNow(Date date) {
         Date now = getCurrentTime();

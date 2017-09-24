@@ -1,5 +1,7 @@
 package com.nchu.entity;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -15,12 +17,14 @@ import java.util.Set;
  * 商品表实体类
  */
 @Entity
-public class Goods implements Serializable{
+@DynamicInsert
+@DynamicUpdate
+public class Goods implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private long id;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     private String name;
@@ -76,7 +80,7 @@ public class Goods implements Serializable{
     }
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     public long getId() {
         return id;
     }
@@ -86,7 +90,7 @@ public class Goods implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -96,7 +100,7 @@ public class Goods implements Serializable{
     }
 
     @Basic
-    @Column(name = "gmt_modified", nullable = false)
+    @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -106,7 +110,7 @@ public class Goods implements Serializable{
     }
 
     @Basic
-    @Column(name = "name", nullable = false, length = 255)
+    @Column(name = "name", length = 255)
     public String getName() {
         return name;
     }
@@ -116,7 +120,7 @@ public class Goods implements Serializable{
     }
 
     @Basic
-    @Column(name = "originalprice", nullable = false, precision = 2)
+    @Column(name = "originalprice", precision = 2)
     public BigDecimal getOriginalprice() {
         return originalprice;
     }
@@ -126,7 +130,7 @@ public class Goods implements Serializable{
     }
 
     @Basic
-    @Column(name = "preferentialprice", nullable = false, precision = 2)
+    @Column(name = "preferentialprice", precision = 2)
     public BigDecimal getPreferentialprice() {
         return preferentialprice;
     }
@@ -146,7 +150,7 @@ public class Goods implements Serializable{
     }
 
     @Basic
-    @Column(name = "surplus_inventory", nullable = false)
+    @Column(name = "surplus_inventory")
     public long getSurplusInventory() {
         return surplusInventory;
     }
@@ -166,7 +170,7 @@ public class Goods implements Serializable{
     }
 
     @Basic
-    @Column(name = "description", nullable = false, length = -1)
+    @Column(name = "description", length = -1)
     public String getDescription() {
         return description;
     }
@@ -176,7 +180,7 @@ public class Goods implements Serializable{
     }
 
     @Basic
-    @Column(name = "category", nullable = false)
+    @Column(name = "category")
     public long getCategory() {
         return category;
     }
@@ -186,7 +190,7 @@ public class Goods implements Serializable{
     }
 
     @Basic
-    @Column(name = "isonshelves", nullable = false)
+    @Column(name = "isonshelves")
     public boolean isIsonshelves() {
         return isonshelves;
     }

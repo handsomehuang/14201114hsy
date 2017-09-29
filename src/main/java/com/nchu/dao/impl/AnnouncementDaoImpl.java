@@ -1,12 +1,18 @@
 package com.nchu.dao.impl;
 
 import com.nchu.dao.AnnouncementDao;
+import com.nchu.entity.AfterSale;
 import com.nchu.entity.Announcement;
+
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.nchu.util.DateUtil;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.internal.SessionImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,14 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AnnouncementDaoImpl implements AnnouncementDao {
     @Autowired
-    SessionFactory sessionFactory;
-    /**
-     * 获取Hibernate 的session
-     *
-     * @return
-     */
+    SessionFactory sessionfactory;
+
     private Session getSession() {
-        return sessionFactory.getCurrentSession();
+        return sessionfactory.getCurrentSession();
     }
 
     /**
@@ -37,7 +39,10 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
      */
     @Override
     public Long save(Announcement model) {
-        return null;
+        model.setGmtCreate(DateUtil.getCurrentTimestamp());
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().save(model);
+        return model.getId();
     }
 
     /**
@@ -47,7 +52,8 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
      */
     @Override
     public void saveOrUpdate(Announcement model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().saveOrUpdate(model);
     }
 
     /**
@@ -57,7 +63,8 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
      */
     @Override
     public void update(Announcement model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().update(model);
     }
 
     /**
@@ -67,7 +74,8 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
      */
     @Override
     public void merge(Announcement model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().merge(model);
     }
 
     /**
@@ -77,7 +85,7 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
      */
     @Override
     public void delete(Long id) {
-
+        getSession().delete(id);
     }
 
     /**
@@ -87,7 +95,9 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
      */
     @Override
     public void deleteAll(List<Announcement> announcements) {
-
+        for (int i = 0; i < announcements.size(); i++) {
+            getSession().delete(announcements.get(i));
+        }
     }
 
     /**
@@ -97,7 +107,7 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
      */
     @Override
     public void deleteObject(Announcement model) {
-
+        getSession().delete(model);
     }
 
     /**
@@ -108,7 +118,7 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
      */
     @Override
     public Announcement get(Long id) {
-        return null;
+        return (Announcement) getSession().get(Announcement.class, id);
     }
 
     /**
@@ -117,8 +127,10 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
      * @return 返回记录条数
      */
     @Override
-    public int countAll() {
-        return 0;
+    public Long countAll() {
+        String sql = "select count(*) from Announcement";
+        Long count = (Long) getSession().createSQLQuery(sql).uniqueResult();
+        return count;
     }
 
     /**
@@ -128,7 +140,9 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
      */
     @Override
     public List<Announcement> listAll() {
-        return null;
+        String hql = "from Announcement";
+        Query query = getSession().createQuery(hql);
+        return query.list();
     }
 
     /**
@@ -141,7 +155,29 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
      */
     @Override
     public List<Announcement> searchPage(Map<String, Object> conditions, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from Announcement";
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from Announcement af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<Announcement> list = query.list();
+        return list;
     }
 
     /**
@@ -156,7 +192,32 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
      */
     @Override
     public List<Announcement> searchPageByOrder(Map<String, Object> conditions, String orderBy, String order, int page, int pageSize) {
-        return null;
+
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from Announcement order by " + orderBy + " " + order;
+            System.out.println("test.....");
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from Announcement af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<Announcement> list = query.list();
+
+        return list;
     }
 
     /**
@@ -167,7 +228,8 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
      */
     @Override
     public List<Announcement> searchListDefined(String HQL) {
-        return null;
+        Query query = getSession().createQuery(HQL);
+        return query.list();
     }
 
     /**
@@ -178,6 +240,10 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
      */
     @Override
     public boolean exists(Long id) {
-        return false;
+        Announcement model = (Announcement) getSession().get(Announcement.class, id);
+        if (model != null)
+            return true;
+        else
+            return false;
     }
 }

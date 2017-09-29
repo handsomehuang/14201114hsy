@@ -66,4 +66,13 @@
         <servlet-name>spring</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+    <!--配置404和500页面-->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/ErrorPage/404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/ErrorPage/500.jsp</location>
+    </error-page>
 </web-app>

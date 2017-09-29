@@ -42,6 +42,8 @@ public class GroupPurchase implements Serializable {
     /*是否有效*/
     private boolean iseffective;
     private String description;
+    /*参与人数*/
+    private int numberPart;
     /*参团记录表*/
     private Set<ParticipateGroup> participateGroup = new HashSet<>();
 
@@ -176,6 +178,16 @@ public class GroupPurchase implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Basic
+    @Column(name = "number_part")
+    public int getNumberPart() {
+        return numberPart;
+    }
+
+    public void setNumberPart(int numberPart) {
+        this.numberPart = numberPart;
     }
 
     @Override

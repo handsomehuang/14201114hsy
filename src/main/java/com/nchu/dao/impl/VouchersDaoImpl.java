@@ -1,11 +1,17 @@
 package com.nchu.dao.impl;
 
 import com.nchu.dao.VouchersDao;
+import com.nchu.entity.AfterSale;
+import com.nchu.entity.User;
 import com.nchu.entity.Vouchers;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.nchu.enumdef.VoucherStatus;
+import com.nchu.util.DateUtil;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class VouchersDaoImpl implements VouchersDao {
+
     @Autowired
-    SessionFactory sessionFactory;
-    /**
-     * 获取Hibernate 的session
-     *
-     * @return
-     */
+    SessionFactory sessionfactory;
+
     private Session getSession() {
-        return sessionFactory.getCurrentSession();
+        return sessionfactory.getCurrentSession();
     }
 
     /**
@@ -38,8 +41,10 @@ public class VouchersDaoImpl implements VouchersDao {
      */
     @Override
     public Long save(Vouchers model) {
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        model.setGmtCreate(DateUtil.getCurrentTimestamp());
         getSession().save(model);
-        return null;
+        return model.getId();
     }
 
     /**
@@ -49,7 +54,8 @@ public class VouchersDaoImpl implements VouchersDao {
      */
     @Override
     public void saveOrUpdate(Vouchers model) {
-        getSession().save(model);
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().saveOrUpdate(model);
     }
 
     /**
@@ -59,7 +65,8 @@ public class VouchersDaoImpl implements VouchersDao {
      */
     @Override
     public void update(Vouchers model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().update(model);
     }
 
     /**
@@ -69,7 +76,8 @@ public class VouchersDaoImpl implements VouchersDao {
      */
     @Override
     public void merge(Vouchers model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().merge(model);
     }
 
     /**
@@ -79,7 +87,8 @@ public class VouchersDaoImpl implements VouchersDao {
      */
     @Override
     public void delete(Long id) {
-
+        Vouchers model = (Vouchers) getSession().get(Vouchers.class, id);
+        getSession().delete(model);
     }
 
     /**
@@ -89,7 +98,9 @@ public class VouchersDaoImpl implements VouchersDao {
      */
     @Override
     public void deleteAll(List<Vouchers> vouchers) {
-
+        for (int i = 0; i < vouchers.size(); i++) {
+            getSession().delete(vouchers.get(i));
+        }
     }
 
     /**
@@ -99,7 +110,7 @@ public class VouchersDaoImpl implements VouchersDao {
      */
     @Override
     public void deleteObject(Vouchers model) {
-
+        getSession().delete(model);
     }
 
     /**
@@ -110,7 +121,8 @@ public class VouchersDaoImpl implements VouchersDao {
      */
     @Override
     public Vouchers get(Long id) {
-        return null;
+        Vouchers model = (Vouchers) getSession().get(Vouchers.class, id);
+        return model;
     }
 
     /**
@@ -119,8 +131,10 @@ public class VouchersDaoImpl implements VouchersDao {
      * @return 返回记录条数
      */
     @Override
-    public int countAll() {
-        return 0;
+    public Long countAll() {
+        String sql = "select count(*) from Vouchers ";
+        Long count = (Long) getSession().createQuery(sql).uniqueResult();
+        return count;
     }
 
     /**
@@ -130,7 +144,9 @@ public class VouchersDaoImpl implements VouchersDao {
      */
     @Override
     public List<Vouchers> listAll() {
-        return null;
+        String hql = "from Vouchers ";
+        Query query = getSession().createQuery(hql);
+        return query.list();
     }
 
     /**
@@ -143,7 +159,29 @@ public class VouchersDaoImpl implements VouchersDao {
      */
     @Override
     public List<Vouchers> searchPage(Map<String, Object> conditions, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from Vouchers";
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from Vouchers v where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<Vouchers> list = query.list();
+        return list;
     }
 
     /**
@@ -158,7 +196,30 @@ public class VouchersDaoImpl implements VouchersDao {
      */
     @Override
     public List<Vouchers> searchPageByOrder(Map<String, Object> conditions, String orderBy, String order, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from Vouchers order by " + orderBy + " " + order;
+            System.out.println("test.....");
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from Vouchers af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<Vouchers> list = query.list();
+        return list;
     }
 
     /**
@@ -169,7 +230,8 @@ public class VouchersDaoImpl implements VouchersDao {
      */
     @Override
     public List<Vouchers> searchListDefined(String HQL) {
-        return null;
+        Query query = getSession().createQuery(HQL);
+        return query.list();
     }
 
     /**
@@ -180,6 +242,24 @@ public class VouchersDaoImpl implements VouchersDao {
      */
     @Override
     public boolean exists(Long id) {
-        return false;
+        Vouchers model = (Vouchers) getSession().get(Vouchers.class, id);
+        if (model != null)
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * 删除指定用户全部无效的优惠券
+     *
+     * @param user
+     */
+    @Override
+    public void deleteInvalid(User user) {
+        String hql = "delete from Vouchers v where v.user.id =:uid and (v.status =:status OR v.isused = true)";
+        Query query = getSession().createQuery(hql);
+        query.setParameter("uid", user.getId());
+        query.setParameter("status", VoucherStatus.DISABLED);
+        query.executeUpdate();
     }
 }

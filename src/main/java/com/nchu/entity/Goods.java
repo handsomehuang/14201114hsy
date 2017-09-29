@@ -48,6 +48,8 @@ public class Goods implements Serializable {
     private Set<GoodsPicture> goodsPictures = new HashSet<>();
     /*商品评价列表*/
     private Set<Evaluation> evaluations = new HashSet<>();
+    /*商品参与的团购活动*/
+    private GroupPurchase groupPurchase;
 
     @OneToMany(mappedBy = "goods")
     @LazyCollection(LazyCollectionOption.EXTRA)
@@ -77,6 +79,16 @@ public class Goods implements Serializable {
 
     public void setShop(Shop shop) {
         this.shop = shop;
+    }
+
+    @OneToOne(mappedBy = "goods")
+    @LazyCollection(LazyCollectionOption.EXTRA)
+    public GroupPurchase getGroupPurchase() {
+        return groupPurchase;
+    }
+
+    public void setGroupPurchase(GroupPurchase groupPurchase) {
+        this.groupPurchase = groupPurchase;
     }
 
     @Id

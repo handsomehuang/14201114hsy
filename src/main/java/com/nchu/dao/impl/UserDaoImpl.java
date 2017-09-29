@@ -2,16 +2,16 @@ package com.nchu.dao.impl;
 
 import com.nchu.dao.UserDao;
 import com.nchu.entity.User;
-
-import java.util.List;
-import java.util.Map;
-
+import com.nchu.util.DateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 2017年9月20日08:10:27
@@ -20,16 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class UserDaoImpl implements UserDao {
+
     @Autowired
-    SessionFactory sessionFactory;
+    SessionFactory sessionfactory;
 
     /**
-     * 获取Hibernate 的session
-     *
-     * @return
+     * 获取hibernate回话session
      */
     private Session getSession() {
-        return sessionFactory.getCurrentSession();
+        return sessionfactory.getCurrentSession();
     }
 
     /**
@@ -41,9 +40,44 @@ public class UserDaoImpl implements UserDao {
      * @return 登录成功的用户对象
      */
     @Override
-    public User LoginCheck(User user) {
+    public User loginCheck(User user) {
+        String hql = "from User where account = :account and password = :psd";
+        Query query = getSession().createQuery(hql);
+        query.setParameter("account", user.getAccount());
+        query.setParameter("psd", user.getPassword());
+        return (User) query.uniqueResult();
+    }
 
-        return null;
+    /**
+     * 判断用户账号是否已经存在,用户注册前进行账号重复性检查
+     *
+     * @param account 要检查的账号
+     * @return 若账号已存在返回true, 否则返回false
+     */
+    @Override
+    public boolean accountCheck(String account) {
+        String hql = "select count(*) from User where account=:ac";
+        Query query = getSession().createQuery(hql);
+        query.setParameter("ac", account);
+        int count = (int) query.uniqueResult();
+        if (count != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 通过账号获取用户信息
+     *
+     * @param account 用户账户
+     * @return 返回用户实体
+     */
+    @Override
+    public User getUserByAccount(String account) {
+        String hql = "from User where account =:ac";
+        Query query = getSession().createQuery(hql);
+        query.setParameter("ac", account);
+        return (User) query.uniqueResult();
     }
 
     /**
@@ -54,19 +88,21 @@ public class UserDaoImpl implements UserDao {
      */
     @Override
     public Long save(User model) {
-        System.out.println(model.getAccount());
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        model.setGmtCreate(DateUtil.getCurrentTimestamp());
         getSession().save(model);
         return model.getId();
     }
 
     /**
-     * 保存或者更新,当数据库中 存在同id对象时执行更新操作,没有则执行插入操作
+     * 保存或者更新,当数据库中存在同id对象时执行更新操作,没有则执行插入操作
      *
      * @param model 实体类
      */
     @Override
     public void saveOrUpdate(User model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().saveOrUpdate(model);
     }
 
     /**
@@ -76,7 +112,8 @@ public class UserDaoImpl implements UserDao {
      */
     @Override
     public void update(User model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().update(model);
     }
 
     /**
@@ -86,7 +123,7 @@ public class UserDaoImpl implements UserDao {
      */
     @Override
     public void merge(User model) {
-
+        getSession().merge(model);
     }
 
     /**
@@ -96,7 +133,8 @@ public class UserDaoImpl implements UserDao {
      */
     @Override
     public void delete(Long id) {
-
+        User model = (User) getSession().get(User.class, id);
+        getSession().delete(model);
     }
 
     /**
@@ -106,7 +144,9 @@ public class UserDaoImpl implements UserDao {
      */
     @Override
     public void deleteAll(List<User> users) {
-
+        for (int i = 0; i < users.size(); i++) {
+            getSession().delete(users.get(i));
+        }
     }
 
     /**
@@ -116,7 +156,7 @@ public class UserDaoImpl implements UserDao {
      */
     @Override
     public void deleteObject(User model) {
-
+        getSession().delete(model);
     }
 
     /**
@@ -127,8 +167,7 @@ public class UserDaoImpl implements UserDao {
      */
     @Override
     public User get(Long id) {
-        User user = (User) getSession().get(User.class, id);
-        return user;
+        return (User) getSession().get(User.class, id);
     }
 
     /**
@@ -137,8 +176,10 @@ public class UserDaoImpl implements UserDao {
      * @return 返回记录条数
      */
     @Override
-    public int countAll() {
-        return 0;
+    public Long countAll() {
+        String sql = "select count(*) from User";
+        long count = (long) getSession().createQuery(sql).uniqueResult();
+        return count;
     }
 
     /**
@@ -148,12 +189,9 @@ public class UserDaoImpl implements UserDao {
      */
     @Override
     public List<User> listAll() {
-        Query query = getSession().createQuery("from User ");
-        List<User> userList = query.list();
-        for (User user : userList) {
-            System.out.println("user:" + user.getNickName());
-        }
-        return null;
+        String hql = "from User";
+        Query query = getSession().createQuery(hql);
+        return query.list();
     }
 
     /**
@@ -186,7 +224,8 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> searchListDefined(String HQL) {
-        return null;
+        Query query = getSession().createQuery(HQL);
+        return query.list();
     }
 
     /**
@@ -197,6 +236,10 @@ public class UserDaoImpl implements UserDao {
      */
     @Override
     public boolean exists(Long id) {
-        return false;
+        User model = (User) getSession().get(User.class, id);
+        if (model != null)
+            return true;
+        else
+            return false;
     }
 }

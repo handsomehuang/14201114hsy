@@ -1,15 +1,20 @@
 package com.nchu.dao.impl;
 
 import com.nchu.dao.EvaluationDao;
+import com.nchu.entity.Announcement;
 import com.nchu.entity.Evaluation;
-import java.util.List;
-import java.util.Map;
-
+import com.nchu.entity.Goods;
+import com.nchu.util.DateUtil;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 2017年9月20日10:05:05
@@ -19,14 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class EvaluationDaoImpl implements EvaluationDao {
     @Autowired
-    SessionFactory sessionFactory;
-    /**
-     * 获取Hibernate 的session
-     *
-     * @return
-     */
+    SessionFactory sessionfactory;
+
     private Session getSession() {
-        return sessionFactory.getCurrentSession();
+        return sessionfactory.getCurrentSession();
     }
 
     /**
@@ -37,7 +38,10 @@ public class EvaluationDaoImpl implements EvaluationDao {
      */
     @Override
     public Long save(Evaluation model) {
-        return null;
+        model.setGmtCreate(DateUtil.getCurrentTimestamp());
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().save(model);
+        return model.getId();
     }
 
     /**
@@ -47,7 +51,8 @@ public class EvaluationDaoImpl implements EvaluationDao {
      */
     @Override
     public void saveOrUpdate(Evaluation model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().saveOrUpdate(model);
     }
 
     /**
@@ -57,7 +62,8 @@ public class EvaluationDaoImpl implements EvaluationDao {
      */
     @Override
     public void update(Evaluation model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().update(model);
     }
 
     /**
@@ -67,7 +73,8 @@ public class EvaluationDaoImpl implements EvaluationDao {
      */
     @Override
     public void merge(Evaluation model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().merge(model);
     }
 
     /**
@@ -77,7 +84,7 @@ public class EvaluationDaoImpl implements EvaluationDao {
      */
     @Override
     public void delete(Long id) {
-
+        getSession().delete(id);
     }
 
     /**
@@ -87,7 +94,9 @@ public class EvaluationDaoImpl implements EvaluationDao {
      */
     @Override
     public void deleteAll(List<Evaluation> evaluations) {
-
+        for (int i = 0; i < evaluations.size(); i++) {
+            getSession().delete(evaluations.get(i));
+        }
     }
 
     /**
@@ -97,7 +106,7 @@ public class EvaluationDaoImpl implements EvaluationDao {
      */
     @Override
     public void deleteObject(Evaluation model) {
-
+        getSession().delete(model);
     }
 
     /**
@@ -108,7 +117,7 @@ public class EvaluationDaoImpl implements EvaluationDao {
      */
     @Override
     public Evaluation get(Long id) {
-        return null;
+        return (Evaluation) getSession().get(Evaluation.class, id);
     }
 
     /**
@@ -117,8 +126,10 @@ public class EvaluationDaoImpl implements EvaluationDao {
      * @return 返回记录条数
      */
     @Override
-    public int countAll() {
-        return 0;
+    public Long countAll() {
+        String sql = "select count(*) from Evaluation";
+        Long count = (Long) getSession().createSQLQuery(sql).uniqueResult();
+        return count;
     }
 
     /**
@@ -128,7 +139,9 @@ public class EvaluationDaoImpl implements EvaluationDao {
      */
     @Override
     public List<Evaluation> listAll() {
-        return null;
+        String hql = "from Evaluation";
+        Query query = getSession().createQuery(hql);
+        return query.list();
     }
 
     /**
@@ -141,7 +154,29 @@ public class EvaluationDaoImpl implements EvaluationDao {
      */
     @Override
     public List<Evaluation> searchPage(Map<String, Object> conditions, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from Evaluation";
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from Evaluation af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<Evaluation> list = query.list();
+        return list;
     }
 
     /**
@@ -156,7 +191,31 @@ public class EvaluationDaoImpl implements EvaluationDao {
      */
     @Override
     public List<Evaluation> searchPageByOrder(Map<String, Object> conditions, String orderBy, String order, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from Evaluation order by " + orderBy + " " + order;
+            System.out.println("test.....");
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from Evaluation af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<Evaluation> list = query.list();
+
+        return list;
     }
 
     /**
@@ -167,7 +226,8 @@ public class EvaluationDaoImpl implements EvaluationDao {
      */
     @Override
     public List<Evaluation> searchListDefined(String HQL) {
-        return null;
+        Query query = getSession().createQuery(HQL);
+        return query.list();
     }
 
     /**
@@ -178,6 +238,24 @@ public class EvaluationDaoImpl implements EvaluationDao {
      */
     @Override
     public boolean exists(Long id) {
-        return false;
+        Announcement model = (Announcement) getSession().get(Announcement.class, id);
+        if (model != null)
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * 根据商品对象删除所有关于该商品的评论
+     *
+     * @param model
+     */
+    @Override
+    public void deleteAllByGoods(Goods model) {
+        String hql = "from Evaluation where goods.id=:id";
+        Query query = getSession().createQuery(hql);
+        query.setParameter("id", model.getId());
+        List<Evaluation> list = query.list();
+        deleteAll(list);
     }
 }

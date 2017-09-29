@@ -3,9 +3,12 @@ package com.nchu.dao.impl;
 import com.nchu.dao.AfterSaleDao;
 import com.nchu.entity.AfterSale;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.nchu.util.DateUtil;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +25,7 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
     @Autowired
     SessionFactory sessionFactory;
 
-    /**
-     * 获取Hibernate 的session
-     *
-     * @return
-     */
-    private Session getSession() {
+    Session getSession() {
         return sessionFactory.getCurrentSession();
     }
 
@@ -39,7 +37,10 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
      */
     @Override
     public Long save(AfterSale model) {
-        return null;
+        model.setGmtCreate(DateUtil.getCurrentTimestamp());
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().save(model);
+        return model.getId();
     }
 
     /**
@@ -49,7 +50,8 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
      */
     @Override
     public void saveOrUpdate(AfterSale model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().saveOrUpdate(model);
     }
 
     /**
@@ -59,7 +61,8 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
      */
     @Override
     public void update(AfterSale model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().update(model);
     }
 
     /**
@@ -69,7 +72,8 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
      */
     @Override
     public void merge(AfterSale model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().merge(model);
     }
 
     /**
@@ -79,7 +83,8 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
      */
     @Override
     public void delete(Long id) {
-
+        AfterSale model = (AfterSale) getSession().get(AfterSale.class, id);
+        getSession().delete(model);
     }
 
     /**
@@ -89,7 +94,9 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
      */
     @Override
     public void deleteAll(List<AfterSale> afterSales) {
-
+        for (int i = 0; i < afterSales.size(); i++) {
+            getSession().delete(afterSales.get(i));
+        }
     }
 
     /**
@@ -99,7 +106,7 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
      */
     @Override
     public void deleteObject(AfterSale model) {
-
+        getSession().delete(model);
     }
 
     /**
@@ -110,7 +117,8 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
      */
     @Override
     public AfterSale get(Long id) {
-        return null;
+        AfterSale model = (AfterSale) getSession().get(AfterSale.class, id);
+        return model;
     }
 
     /**
@@ -119,8 +127,10 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
      * @return 返回记录条数
      */
     @Override
-    public int countAll() {
-        return 0;
+    public Long countAll() {
+        String sql = "select count(*) from AfterSale";
+        Long count = (Long) getSession().createQuery(sql).uniqueResult();
+        return count;
     }
 
     /**
@@ -130,7 +140,9 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
      */
     @Override
     public List<AfterSale> listAll() {
-        return null;
+        String hql = "from AfterSale";
+        Query query = getSession().createQuery(hql);
+        return query.list();
     }
 
     /**
@@ -143,7 +155,29 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
      */
     @Override
     public List<AfterSale> searchPage(Map<String, Object> conditions, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from AfterSale";
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from AfterSale af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<AfterSale> list = query.list();
+        return list;
     }
 
     /**
@@ -158,7 +192,30 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
      */
     @Override
     public List<AfterSale> searchPageByOrder(Map<String, Object> conditions, String orderBy, String order, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from AfterSale order by " + orderBy + " " + order;
+            System.out.println("test.....");
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from AfterSale af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<AfterSale> list = query.list();
+        return list;
     }
 
     /**
@@ -169,7 +226,8 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
      */
     @Override
     public List<AfterSale> searchListDefined(String HQL) {
-        return null;
+        Query query = getSession().createQuery(HQL);
+        return query.list();
     }
 
     /**
@@ -180,6 +238,10 @@ public class AfterSaleDaoImpl implements AfterSaleDao {
      */
     @Override
     public boolean exists(Long id) {
-        return false;
+        AfterSale model = (AfterSale) getSession().get(AfterSale.class, id);
+        if (model != null)
+            return true;
+        else
+            return false;
     }
 }

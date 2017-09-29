@@ -2,20 +2,19 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context-3.0.xsd
     http://www.springframework.org/schema/mvc
-    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
-
-    <!-- 自动扫描的包名，前端控制器将在指定的包中查找 -->
-    <context:component-scan base-package="com.nchu.*"/>
+    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <!-- 支持MVC注解映射 -->
     <mvc:annotation-driven/>
+    <!-- 自动扫描的包名，前端控制器将在指定的包中查找 -->
+    <context:component-scan base-package="com.nchu.*"/>
 
     <!--开启事务驱动-->
     <tx:annotation-driven transaction-manager="transactionManager"/>
@@ -31,26 +30,22 @@
         </tx:attributes>
     </tx:advice>
 
-    <!-- 配置事务切点，并把切点和事务属性关联起来 -->
-    <!--    <aop:config>
-            <aop:pointcut expression="execution(* com.nchu.dao.impl.*.*(..))" id="txPointcut"/>
-            <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"/>
-        </aop:config>-->
     <!--配置静态文件路径-->
     <mvc:resources mapping="/images/**" location="/WEB-INF/res/images/"/>
     <mvc:resources mapping="/css/**" location="/WEB-INF/res/css/"/>
     <mvc:resources mapping="/js/**" location="/WEB-INF/res/js/"/>
-    <mvc:resources mapping="/icon/**" location="/WEB-INF/res/icon/"/>
+    <mvc:resources mapping="/favicon.ico" location="/WEB-INF/res/icon/"/>
 
     <!--配置html视图解析器-->
     <bean id="templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver"
-          p:prefix="/WEB-INF/view/" p:suffix=".html" p:templateMode="HTML5" p:characterEncoding="UTF-8">
+          p:prefix="/WEB-INF/view/" p:cacheable="true" p:suffix=".html" p:templateMode="HTML5"
+          p:characterEncoding="UTF-8" p:order="1">
         <constructor-arg ref="servletContext"/>
     </bean>
+
+    <bean id="viewResolver" class="org.thymeleaf.spring4.view.ThymeleafViewResolver"
+          p:templateEngine-ref="templateEngine" p:characterEncoding="UTF-8" p:order="3"/>
     <!--使用thymeleaf模板进行html解析-->
     <bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine"
           p:templateResolver-ref="templateResolver"/>
-
-    <bean id="viewResolver" class="org.thymeleaf.spring4.view.ThymeleafViewResolver"
-          p:templateEngine-ref="templateEngine" p:characterEncoding="UTF-8"/>
 </beans>

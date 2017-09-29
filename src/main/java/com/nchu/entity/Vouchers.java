@@ -20,7 +20,7 @@ public class Vouchers implements Serializable {
      *
      */
     private static final long serialVersionUID = 1L;
-    private long id;
+    private Long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     /*持有人*/
@@ -36,7 +36,7 @@ public class Vouchers implements Serializable {
 
     @Id
     @Column(name = "id")
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

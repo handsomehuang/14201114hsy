@@ -24,7 +24,7 @@ public class User implements Serializable {
      *
      */
     private static final long serialVersionUID = 1L;
-    private long id;
+    private Long id;
     private String account;
     private String password;
     private String relname;
@@ -134,11 +134,11 @@ public class User implements Serializable {
 
     @Id
     @Column(name = "id", nullable = false)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -203,7 +203,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "headportrait",length = 255)
+    @Column(name = "headportrait", length = 255)
     public String getHeadportrait() {
         return headportrait;
     }

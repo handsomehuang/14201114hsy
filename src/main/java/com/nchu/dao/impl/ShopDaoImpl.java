@@ -2,14 +2,19 @@ package com.nchu.dao.impl;
 
 import com.nchu.dao.ShopDao;
 import com.nchu.entity.Shop;
-import java.util.List;
-import java.util.Map;
-
+import com.nchu.entity.User;
+import com.nchu.util.DateUtil;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigInteger;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 2017年9月20日09:19:23
@@ -18,15 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class ShopDaoImpl implements ShopDao {
+
     @Autowired
-    SessionFactory sessionFactory;
-    /**
-     * 获取Hibernate 的session
-     *
-     * @return
-     */
+    SessionFactory sessionfactory;
+
     private Session getSession() {
-        return sessionFactory.getCurrentSession();
+        return sessionfactory.getCurrentSession();
     }
 
     /**
@@ -37,7 +39,10 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public Long save(Shop model) {
-        return null;
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        model.setGmtCreate(DateUtil.getCurrentTimestamp());
+        getSession().save(model);
+        return model.getId();
     }
 
     /**
@@ -47,7 +52,8 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public void saveOrUpdate(Shop model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().saveOrUpdate(model);
     }
 
     /**
@@ -57,7 +63,8 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public void update(Shop model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().update(model);
     }
 
     /**
@@ -67,7 +74,7 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public void merge(Shop model) {
-
+        getSession().merge(model);
     }
 
     /**
@@ -77,7 +84,8 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public void delete(Long id) {
-
+        Shop model = (Shop) getSession().get(Shop.class, id);
+        getSession().delete(model);
     }
 
     /**
@@ -87,7 +95,9 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public void deleteAll(List<Shop> shops) {
-
+        for (int i = 0; i < shops.size(); i++) {
+            getSession().delete(shops.get(i));
+        }
     }
 
     /**
@@ -97,7 +107,7 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public void deleteObject(Shop model) {
-
+        getSession().delete(model);
     }
 
     /**
@@ -108,7 +118,8 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public Shop get(Long id) {
-        return null;
+        Shop model = (Shop) getSession().get(Shop.class, id);
+        return model;
     }
 
     /**
@@ -117,8 +128,10 @@ public class ShopDaoImpl implements ShopDao {
      * @return 返回记录条数
      */
     @Override
-    public int countAll() {
-        return 0;
+    public Long countAll() {
+        String sql = "select count(*) from Shop ";
+        Long count = (Long) getSession().createQuery(sql).uniqueResult();
+        return count;
     }
 
     /**
@@ -128,7 +141,9 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public List<Shop> listAll() {
-        return null;
+        String hql = "from Shop ";
+        Query query = getSession().createQuery(hql);
+        return query.list();
     }
 
     /**
@@ -141,7 +156,29 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public List<Shop> searchPage(Map<String, Object> conditions, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from Shop ";
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from shop s where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<Shop> list = query.list();
+        return list;
     }
 
     /**
@@ -156,7 +193,30 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public List<Shop> searchPageByOrder(Map<String, Object> conditions, String orderBy, String order, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from Shop order by " + orderBy + " " + order;
+            System.out.println("test.....");
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from Shop af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<Shop> list = query.list();
+        return list;
     }
 
     /**
@@ -167,7 +227,8 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public List<Shop> searchListDefined(String HQL) {
-        return null;
+        Query query = getSession().createQuery(HQL);
+        return query.list();
     }
 
     /**
@@ -178,6 +239,47 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public boolean exists(Long id) {
-        return false;
+        Shop model = (Shop) getSession().get(Shop.class, id);
+        if (model != null)
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * 通过User查询对象
+     *
+     * @param model User实体
+     * @return 返回查询结果对象
+     */
+    @Override
+    public Shop getByUser(User model) {
+        String hql = "from Shop where Shop.user.id=?";
+        Query query = getSession().createQuery(hql);
+        query.setBigInteger(0, BigInteger.valueOf(model.getId()));
+        return (Shop) query.uniqueResult();
+    }
+
+    /**
+     * 分页查询店铺
+     *
+     * @param keyword  查询关键词,如果关键词为空执行全部查询
+     * @param page     页码
+     * @param pageSize 每页大小
+     * @return 查询结果列表
+     */
+    @Override
+    public List<Shop> searchShop(String keyword, int page, int pageSize) {
+        String hql;
+        if (keyword.trim().length() != 0) {
+            hql = "from Shop ";
+        } else {
+            hql = "from Shop where Shop.name like '%%" + keyword + "%%'";
+        }
+        Query query = getSession().createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        return query.list();
     }
 }

@@ -1,15 +1,19 @@
 package com.nchu.dao.impl;
 
 import com.nchu.dao.ReceiverAddressDao;
+import com.nchu.entity.AfterSale;
 import com.nchu.entity.ReceivingAddress;
-import java.util.List;
-import java.util.Map;
-
+import com.nchu.util.DateUtil;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 2017年9月20日14:00:19
@@ -18,15 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
+
     @Autowired
-    SessionFactory sessionFactory;
-    /**
-     * 获取Hibernate 的session
-     *
-     * @return
-     */
+    SessionFactory sessionfactory;
+
     private Session getSession() {
-        return sessionFactory.getCurrentSession();
+        return sessionfactory.getCurrentSession();
     }
 
     /**
@@ -37,7 +38,10 @@ public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
      */
     @Override
     public Long save(ReceivingAddress model) {
-        return null;
+        model.setGmtModify(DateUtil.getCurrentTimestamp());
+        model.setGmtCreate(DateUtil.getCurrentTimestamp());
+        getSession().save(model);
+        return model.getId();
     }
 
     /**
@@ -47,7 +51,8 @@ public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
      */
     @Override
     public void saveOrUpdate(ReceivingAddress model) {
-
+        model.setGmtModify(DateUtil.getCurrentTimestamp());
+        getSession().saveOrUpdate(model);
     }
 
     /**
@@ -57,7 +62,8 @@ public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
      */
     @Override
     public void update(ReceivingAddress model) {
-
+        model.setGmtModify(DateUtil.getCurrentTimestamp());
+        getSession().update(model);
     }
 
     /**
@@ -67,7 +73,7 @@ public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
      */
     @Override
     public void merge(ReceivingAddress model) {
-
+        getSession().merge(model);
     }
 
     /**
@@ -77,7 +83,8 @@ public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
      */
     @Override
     public void delete(Long id) {
-
+        ReceivingAddress model = (ReceivingAddress) getSession().get(ReceivingAddress.class, id);
+        getSession().delete(model);
     }
 
     /**
@@ -87,7 +94,9 @@ public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
      */
     @Override
     public void deleteAll(List<ReceivingAddress> receivingAddresses) {
-
+        for (int i = 0; i < receivingAddresses.size(); i++) {
+            getSession().delete(receivingAddresses.get(i));
+        }
     }
 
     /**
@@ -97,7 +106,7 @@ public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
      */
     @Override
     public void deleteObject(ReceivingAddress model) {
-
+        getSession().delete(model);
     }
 
     /**
@@ -108,7 +117,8 @@ public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
      */
     @Override
     public ReceivingAddress get(Long id) {
-        return null;
+        ReceivingAddress model = (ReceivingAddress) getSession().get(ReceivingAddress.class, id);
+        return model;
     }
 
     /**
@@ -117,8 +127,10 @@ public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
      * @return 返回记录条数
      */
     @Override
-    public int countAll() {
-        return 0;
+    public Long countAll() {
+        String sql = "select count(*) from ReceivingAddress ";
+        Long count = (Long) getSession().createQuery(sql).uniqueResult();
+        return count;
     }
 
     /**
@@ -128,7 +140,9 @@ public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
      */
     @Override
     public List<ReceivingAddress> listAll() {
-        return null;
+        String hql = "from ReceivingAddress ";
+        Query query = getSession().createQuery(hql);
+        return query.list();
     }
 
     /**
@@ -141,7 +155,29 @@ public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
      */
     @Override
     public List<ReceivingAddress> searchPage(Map<String, Object> conditions, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from ReceivingAddress ";
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from receiving_address ra where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<ReceivingAddress> list = query.list();
+        return list;
     }
 
     /**
@@ -156,7 +192,30 @@ public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
      */
     @Override
     public List<ReceivingAddress> searchPageByOrder(Map<String, Object> conditions, String orderBy, String order, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from ReceivingAddress order by " + orderBy + " " + order;
+            System.out.println("test.....");
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from ReceivingAddress af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<ReceivingAddress> list = query.list();
+        return list;
     }
 
     /**
@@ -167,7 +226,8 @@ public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
      */
     @Override
     public List<ReceivingAddress> searchListDefined(String HQL) {
-        return null;
+        Query query = getSession().createQuery(HQL);
+        return query.list();
     }
 
     /**
@@ -178,6 +238,10 @@ public class ReceiverAddressDaoImpl implements ReceiverAddressDao {
      */
     @Override
     public boolean exists(Long id) {
-        return false;
+        ReceivingAddress model = (ReceivingAddress) getSession().get(ReceivingAddress.class, id);
+        if (model != null)
+            return true;
+        else
+            return false;
     }
 }

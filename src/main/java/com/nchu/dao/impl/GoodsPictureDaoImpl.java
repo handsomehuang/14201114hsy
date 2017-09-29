@@ -1,10 +1,16 @@
 package com.nchu.dao.impl;
 
 import com.nchu.dao.GoodsPictureDao;
+import com.nchu.entity.AfterSale;
+import com.nchu.entity.Goods;
 import com.nchu.entity.GoodsPicture;
+
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.nchu.util.DateUtil;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class GoodsPictureDaoImpl implements GoodsPictureDao {
     @Autowired
     SessionFactory sessionFactory;
-    /**
-     * 获取Hibernate 的session
-     *
-     * @return
-     */
-    private Session getSession() {
+
+    Session getSession() {
         return sessionFactory.getCurrentSession();
     }
 
@@ -33,7 +35,10 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      */
     @Override
     public Long save(GoodsPicture model) {
-        return null;
+        model.setGmtCreate(DateUtil.getCurrentTimestamp());
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().save(model);
+        return model.getId();
     }
 
     /**
@@ -43,7 +48,8 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      */
     @Override
     public void saveOrUpdate(GoodsPicture model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().saveOrUpdate(model);
     }
 
     /**
@@ -53,7 +59,8 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      */
     @Override
     public void update(GoodsPicture model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().update(model);
     }
 
     /**
@@ -63,7 +70,7 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      */
     @Override
     public void merge(GoodsPicture model) {
-
+        getSession().merge(model);
     }
 
     /**
@@ -73,7 +80,8 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      */
     @Override
     public void delete(Long id) {
-
+        GoodsPicture model = (GoodsPicture) getSession().get(GoodsPicture.class, id);
+        getSession().delete(model);
     }
 
     /**
@@ -83,7 +91,9 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      */
     @Override
     public void deleteAll(List<GoodsPicture> goodsPictures) {
-
+        for (int i = 0; i < goodsPictures.size(); i++) {
+            getSession().delete(goodsPictures.get(i));
+        }
     }
 
     /**
@@ -93,7 +103,7 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      */
     @Override
     public void deleteObject(GoodsPicture model) {
-
+        getSession().delete(model);
     }
 
     /**
@@ -104,7 +114,9 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      */
     @Override
     public GoodsPicture get(Long id) {
-        return null;
+        GoodsPicture model = new GoodsPicture();
+        model = (GoodsPicture) getSession().get(GoodsPicture.class, id);
+        return model;
     }
 
     /**
@@ -113,8 +125,10 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      * @return 返回记录条数
      */
     @Override
-    public int countAll() {
-        return 0;
+    public Long countAll() {
+        String sql = "select count(*) from GoodsPicture ";
+        Long count = (Long) getSession().createQuery(sql).uniqueResult();
+        return count;
     }
 
     /**
@@ -124,7 +138,9 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      */
     @Override
     public List<GoodsPicture> listAll() {
-        return null;
+        String hql = "from GoodsPicture ";
+        Query query = getSession().createQuery(hql);
+        return query.list();
     }
 
     /**
@@ -137,7 +153,29 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      */
     @Override
     public List<GoodsPicture> searchPage(Map<String, Object> conditions, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from GoodsPicture ";
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from GoodsPicture gp where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<GoodsPicture> list = query.list();
+        return list;
     }
 
     /**
@@ -152,7 +190,30 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      */
     @Override
     public List<GoodsPicture> searchPageByOrder(Map<String, Object> conditions, String orderBy, String order, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from GoodsPicture order by " + orderBy + " " + order;
+            System.out.println("test.....");
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from GoodsPicture af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<GoodsPicture> list = query.list();
+        return list;
     }
 
     /**
@@ -163,7 +224,8 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      */
     @Override
     public List<GoodsPicture> searchListDefined(String HQL) {
-        return null;
+        Query query = getSession().createQuery(HQL);
+        return query.list();
     }
 
     /**
@@ -174,6 +236,10 @@ public class GoodsPictureDaoImpl implements GoodsPictureDao {
      */
     @Override
     public boolean exists(Long id) {
-        return false;
+        GoodsPicture model = (GoodsPicture) getSession().get(GoodsPicture.class, id);
+        if (model != null)
+            return true;
+        else
+            return false;
     }
 }

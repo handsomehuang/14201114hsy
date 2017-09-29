@@ -1,11 +1,15 @@
 package com.nchu.dao.impl;
 
 import com.nchu.dao.FavoritesDao;
+import com.nchu.entity.AfterSale;
 import com.nchu.entity.Favorites;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.nchu.util.DateUtil;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class FavoritesDaoImpl implements FavoritesDao {
     @Autowired
-    SessionFactory sessionFactory;
-    /**
-     * 获取Hibernate 的session
-     *
-     * @return
-     */
+    SessionFactory sessionfactory;
+
     private Session getSession() {
-        return sessionFactory.getCurrentSession();
+        return sessionfactory.getCurrentSession();
     }
 
     /**
@@ -34,7 +34,10 @@ public class FavoritesDaoImpl implements FavoritesDao {
      */
     @Override
     public Long save(Favorites model) {
-        return null;
+        model.setGmtCreate(DateUtil.getCurrentTimestamp());
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().save(model);
+        return model.getId();
     }
 
     /**
@@ -44,7 +47,8 @@ public class FavoritesDaoImpl implements FavoritesDao {
      */
     @Override
     public void saveOrUpdate(Favorites model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().saveOrUpdate(model);
     }
 
     /**
@@ -54,7 +58,8 @@ public class FavoritesDaoImpl implements FavoritesDao {
      */
     @Override
     public void update(Favorites model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().update(model);
     }
 
     /**
@@ -64,7 +69,7 @@ public class FavoritesDaoImpl implements FavoritesDao {
      */
     @Override
     public void merge(Favorites model) {
-
+        getSession().merge(model);
     }
 
     /**
@@ -74,7 +79,7 @@ public class FavoritesDaoImpl implements FavoritesDao {
      */
     @Override
     public void delete(Long id) {
-
+        getSession().delete(id);
     }
 
     /**
@@ -84,7 +89,9 @@ public class FavoritesDaoImpl implements FavoritesDao {
      */
     @Override
     public void deleteAll(List<Favorites> favorites) {
-
+        for (int i = 0; i < favorites.size(); i++) {
+            getSession().delete(favorites.get(i));
+        }
     }
 
     /**
@@ -94,7 +101,7 @@ public class FavoritesDaoImpl implements FavoritesDao {
      */
     @Override
     public void deleteObject(Favorites model) {
-
+        getSession().delete(model);
     }
 
     /**
@@ -105,7 +112,7 @@ public class FavoritesDaoImpl implements FavoritesDao {
      */
     @Override
     public Favorites get(Long id) {
-        return null;
+        return (Favorites) getSession().get(Favorites.class, id);
     }
 
     /**
@@ -114,8 +121,9 @@ public class FavoritesDaoImpl implements FavoritesDao {
      * @return 返回记录条数
      */
     @Override
-    public int countAll() {
-        return 0;
+    public Long countAll() {
+        String sql = "select count(*) from AfterSale";
+        return (Long) getSession().createSQLQuery(sql).uniqueResult();
     }
 
     /**
@@ -125,7 +133,9 @@ public class FavoritesDaoImpl implements FavoritesDao {
      */
     @Override
     public List<Favorites> listAll() {
-        return null;
+        String hql = "from Favorites";
+        Query query = getSession().createQuery(hql);
+        return query.list();
     }
 
     /**
@@ -138,7 +148,29 @@ public class FavoritesDaoImpl implements FavoritesDao {
      */
     @Override
     public List<Favorites> searchPage(Map<String, Object> conditions, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from Favorites";
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from Favorites af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<Favorites> list = query.list();
+        return list;
     }
 
     /**
@@ -153,7 +185,31 @@ public class FavoritesDaoImpl implements FavoritesDao {
      */
     @Override
     public List<Favorites> searchPageByOrder(Map<String, Object> conditions, String orderBy, String order, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from Favorites order by " + orderBy + " " + order;
+            System.out.println("test.....");
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from Favorites af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<Favorites> list = query.list();
+
+        return list;
     }
 
     /**
@@ -164,7 +220,8 @@ public class FavoritesDaoImpl implements FavoritesDao {
      */
     @Override
     public List<Favorites> searchListDefined(String HQL) {
-        return null;
+        Query query = getSession().createQuery(HQL);
+        return query.list();
     }
 
     /**
@@ -175,6 +232,10 @@ public class FavoritesDaoImpl implements FavoritesDao {
      */
     @Override
     public boolean exists(Long id) {
-        return false;
+        AfterSale model = (AfterSale) getSession().get(AfterSale.class, id);
+        if (model != null)
+            return true;
+        else
+            return false;
     }
 }

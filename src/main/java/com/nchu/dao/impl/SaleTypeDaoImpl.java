@@ -2,15 +2,17 @@ package com.nchu.dao.impl;
 
 import com.nchu.dao.SaleTypeDao;
 import com.nchu.entity.Saletype;
-
-import java.util.List;
-import java.util.Map;
-
+import com.nchu.util.DateUtil;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 2017年9月20日15:25:12
@@ -19,15 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class SaleTypeDaoImpl implements SaleTypeDao {
+
     @Autowired
-    SessionFactory sessionFactory;
-    /**
-     * 获取Hibernate 的session
-     *
-     * @return
-     */
+    SessionFactory sessionfactory;
+
     private Session getSession() {
-        return sessionFactory.getCurrentSession();
+        return sessionfactory.getCurrentSession();
     }
 
     /**
@@ -38,7 +37,10 @@ public class SaleTypeDaoImpl implements SaleTypeDao {
      */
     @Override
     public Long save(Saletype model) {
-        return null;
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        model.setGmtCreate(DateUtil.getCurrentTimestamp());
+        getSession().save(model);
+        return model.getId();
     }
 
     /**
@@ -48,7 +50,8 @@ public class SaleTypeDaoImpl implements SaleTypeDao {
      */
     @Override
     public void saveOrUpdate(Saletype model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().saveOrUpdate(model);
     }
 
     /**
@@ -58,7 +61,8 @@ public class SaleTypeDaoImpl implements SaleTypeDao {
      */
     @Override
     public void update(Saletype model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().update(model);
     }
 
     /**
@@ -68,7 +72,7 @@ public class SaleTypeDaoImpl implements SaleTypeDao {
      */
     @Override
     public void merge(Saletype model) {
-
+        getSession().merge(model);
     }
 
     /**
@@ -78,7 +82,8 @@ public class SaleTypeDaoImpl implements SaleTypeDao {
      */
     @Override
     public void delete(Long id) {
-
+        Saletype model = (Saletype) getSession().get(Saletype.class, id);
+        getSession().delete(model);
     }
 
     /**
@@ -88,7 +93,9 @@ public class SaleTypeDaoImpl implements SaleTypeDao {
      */
     @Override
     public void deleteAll(List<Saletype> saletypes) {
-
+        for (int i = 0; i < saletypes.size(); i++) {
+            getSession().delete(saletypes.get(i));
+        }
     }
 
     /**
@@ -98,7 +105,7 @@ public class SaleTypeDaoImpl implements SaleTypeDao {
      */
     @Override
     public void deleteObject(Saletype model) {
-
+        getSession().delete(model);
     }
 
     /**
@@ -109,7 +116,7 @@ public class SaleTypeDaoImpl implements SaleTypeDao {
      */
     @Override
     public Saletype get(Long id) {
-        return null;
+        return (Saletype) getSession().get(Saletype.class, id);
     }
 
     /**
@@ -118,8 +125,10 @@ public class SaleTypeDaoImpl implements SaleTypeDao {
      * @return 返回记录条数
      */
     @Override
-    public int countAll() {
-        return 0;
+    public Long countAll() {
+        String sql = "select count(*) from Saletype ";
+        Long count = (Long) getSession().createQuery(sql).uniqueResult();
+        return count;
     }
 
     /**
@@ -129,7 +138,9 @@ public class SaleTypeDaoImpl implements SaleTypeDao {
      */
     @Override
     public List<Saletype> listAll() {
-        return null;
+        String hql = "from Saletype ";
+        Query query = getSession().createQuery(hql);
+        return query.list();
     }
 
     /**
@@ -142,7 +153,29 @@ public class SaleTypeDaoImpl implements SaleTypeDao {
      */
     @Override
     public List<Saletype> searchPage(Map<String, Object> conditions, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from Saletype ";
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from saletype st where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<Saletype> list = query.list();
+        return list;
     }
 
     /**
@@ -157,7 +190,30 @@ public class SaleTypeDaoImpl implements SaleTypeDao {
      */
     @Override
     public List<Saletype> searchPageByOrder(Map<String, Object> conditions, String orderBy, String order, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from Saletype order by " + orderBy + " " + order;
+            System.out.println("test.....");
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from Saletype af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<Saletype> list = query.list();
+        return list;
     }
 
     /**
@@ -168,7 +224,8 @@ public class SaleTypeDaoImpl implements SaleTypeDao {
      */
     @Override
     public List<Saletype> searchListDefined(String HQL) {
-        return null;
+        Query query = getSession().createQuery(HQL);
+        return query.list();
     }
 
     /**
@@ -179,6 +236,10 @@ public class SaleTypeDaoImpl implements SaleTypeDao {
      */
     @Override
     public boolean exists(Long id) {
-        return false;
+        Saletype model = (Saletype) getSession().get(Saletype.class, id);
+        if (model != null)
+            return true;
+        else
+            return false;
     }
 }

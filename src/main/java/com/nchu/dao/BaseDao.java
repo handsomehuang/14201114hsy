@@ -76,7 +76,7 @@ public interface BaseDao<Entity extends Serializable, PK extends Long> {
      *
      * @return 返回记录条数
      */
-    int countAll();
+    Long countAll();
 
     /**
      * 查询全部数据记录

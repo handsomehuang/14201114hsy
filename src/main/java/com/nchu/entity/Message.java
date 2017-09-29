@@ -27,6 +27,7 @@ public class Message implements Serializable {
     /*接收人*/
     private User receiver;
     private String senderNicke;
+    private String content;
     private int type;
     private boolean isread;
     private boolean isdeleted;
@@ -92,6 +93,16 @@ public class Message implements Serializable {
     }
 
     @Basic
+    @Column(name = "content")
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    @Basic
     @Column(name = "type")
     public int getType() {
         return type;
@@ -134,9 +145,10 @@ public class Message implements Serializable {
         if (isdeleted != message.isdeleted) return false;
         if (gmtCreate != null ? !gmtCreate.equals(message.gmtCreate) : message.gmtCreate != null) return false;
         if (gmtModified != null ? !gmtModified.equals(message.gmtModified) : message.gmtModified != null) return false;
+        if (sender != null ? !sender.equals(message.sender) : message.sender != null) return false;
+        if (receiver != null ? !receiver.equals(message.receiver) : message.receiver != null) return false;
         if (senderNicke != null ? !senderNicke.equals(message.senderNicke) : message.senderNicke != null) return false;
-
-        return true;
+        return content != null ? content.equals(message.content) : message.content == null;
     }
 
     @Override
@@ -144,7 +156,10 @@ public class Message implements Serializable {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (gmtCreate != null ? gmtCreate.hashCode() : 0);
         result = 31 * result + (gmtModified != null ? gmtModified.hashCode() : 0);
+        result = 31 * result + (sender != null ? sender.hashCode() : 0);
+        result = 31 * result + (receiver != null ? receiver.hashCode() : 0);
         result = 31 * result + (senderNicke != null ? senderNicke.hashCode() : 0);
+        result = 31 * result + (content != null ? content.hashCode() : 0);
         result = 31 * result + type;
         result = 31 * result + (isread ? 1 : 0);
         result = 31 * result + (isdeleted ? 1 : 0);

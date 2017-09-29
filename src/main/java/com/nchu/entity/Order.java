@@ -27,6 +27,7 @@ public class Order implements Serializable {
     private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
+    /*下订单的用户*/
     private User user;
     /*订单关联的商品*/
     private Goods goods;
@@ -34,8 +35,10 @@ public class Order implements Serializable {
     private ExpressDelivery expressDelivery;
     /*订单金额*/
     private BigDecimal price;
+    /*支付方式*/
+    private String payMethod;
     /*订单状态*/
-    private OrderStatus orderStatus;
+    private String orderStatus;
     private String remark;
     /*订单关联的售后记录表*/
     private Set<AfterSale> afterSales = new HashSet<>();
@@ -120,13 +123,23 @@ public class Order implements Serializable {
         this.price = price;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "status")
-    public OrderStatus getOrderStatus() {
+    @Basic
+    @Column(name = "pay_method")
+    public String getPayMethod() {
+        return payMethod;
+    }
+
+    public void setPayMethod(String payMethod) {
+        this.payMethod = payMethod;
+    }
+
+    @Basic
+    @Column(name = "status")
+    public String getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
+    public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
     }
 
@@ -144,14 +157,20 @@ public class Order implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Order order = (Order) o;
+
         if (id != order.id) return false;
         if (gmtCreate != null ? !gmtCreate.equals(order.gmtCreate) : order.gmtCreate != null) return false;
         if (gmtModified != null ? !gmtModified.equals(order.gmtModified) : order.gmtModified != null) return false;
+        if (user != null ? !user.equals(order.user) : order.user != null) return false;
+        if (goods != null ? !goods.equals(order.goods) : order.goods != null) return false;
+        if (expressDelivery != null ? !expressDelivery.equals(order.expressDelivery) : order.expressDelivery != null)
+            return false;
         if (price != null ? !price.equals(order.price) : order.price != null) return false;
+        if (orderStatus != null ? !orderStatus.equals(order.orderStatus) : order.orderStatus != null) return false;
         if (remark != null ? !remark.equals(order.remark) : order.remark != null) return false;
-
-        return true;
+        return afterSales != null ? afterSales.equals(order.afterSales) : order.afterSales == null;
     }
 
     @Override
@@ -159,8 +178,13 @@ public class Order implements Serializable {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (gmtCreate != null ? gmtCreate.hashCode() : 0);
         result = 31 * result + (gmtModified != null ? gmtModified.hashCode() : 0);
+        result = 31 * result + (user != null ? user.hashCode() : 0);
+        result = 31 * result + (goods != null ? goods.hashCode() : 0);
+        result = 31 * result + (expressDelivery != null ? expressDelivery.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
+        result = 31 * result + (orderStatus != null ? orderStatus.hashCode() : 0);
         result = 31 * result + (remark != null ? remark.hashCode() : 0);
+        result = 31 * result + (afterSales != null ? afterSales.hashCode() : 0);
         return result;
     }
 }

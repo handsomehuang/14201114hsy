@@ -1,9 +1,18 @@
 package com.nchu.dao.impl;
+
 import com.nchu.dao.GroupPurchaseDao;
+import com.nchu.entity.AfterSale;
+import com.nchu.entity.Goods;
+import com.nchu.entity.GoodsPicture;
 import com.nchu.entity.GroupPurchase;
+
+import java.math.BigInteger;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.nchu.util.DateUtil;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
     @Autowired
     SessionFactory sessionFactory;
-    /**
-     * 获取Hibernate 的session
-     *
-     * @return
-     */
-    private Session getSession() {
+
+    Session getSession() {
         return sessionFactory.getCurrentSession();
     }
 
@@ -36,7 +41,10 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public Long save(GroupPurchase model) {
-        return null;
+        model.setGmtCreate(DateUtil.getCurrentTimestamp());
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().save(model);
+        return model.getId();
     }
 
     /**
@@ -46,7 +54,8 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public void saveOrUpdate(GroupPurchase model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().saveOrUpdate(model);
     }
 
     /**
@@ -56,7 +65,8 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public void update(GroupPurchase model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().update(model);
     }
 
     /**
@@ -66,7 +76,7 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public void merge(GroupPurchase model) {
-
+        getSession().merge(model);
     }
 
     /**
@@ -76,7 +86,8 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public void delete(Long id) {
-
+        GroupPurchase model = (GroupPurchase) getSession().get(GroupPurchase.class, id);
+        getSession().delete(model);
     }
 
     /**
@@ -86,7 +97,9 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public void deleteAll(List<GroupPurchase> groupPurchases) {
-
+        for (int i = 0; i < groupPurchases.size(); i++) {
+            getSession().delete(groupPurchases.get(i));
+        }
     }
 
     /**
@@ -96,7 +109,7 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public void deleteObject(GroupPurchase model) {
-
+        getSession().delete(model);
     }
 
     /**
@@ -107,7 +120,7 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public GroupPurchase get(Long id) {
-        return null;
+        return (GroupPurchase) getSession().get(GroupPurchase.class, id);
     }
 
     /**
@@ -116,8 +129,10 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      * @return 返回记录条数
      */
     @Override
-    public int countAll() {
-        return 0;
+    public Long countAll() {
+        String sql = "select count(*) from GroupPurchase ";
+        Long count = (Long) getSession().createQuery(sql).uniqueResult();
+        return count;
     }
 
     /**
@@ -127,7 +142,9 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public List<GroupPurchase> listAll() {
-        return null;
+        String hql = "from GroupPurchase ";
+        Query query = getSession().createQuery(hql);
+        return query.list();
     }
 
     /**
@@ -140,7 +157,29 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public List<GroupPurchase> searchPage(Map<String, Object> conditions, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from GroupPurchase ";
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from group_purchase gp where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<GroupPurchase> list = query.list();
+        return list;
     }
 
     /**
@@ -155,7 +194,30 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public List<GroupPurchase> searchPageByOrder(Map<String, Object> conditions, String orderBy, String order, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from GroupPurchase order by " + orderBy + " " + order;
+            System.out.println("test.....");
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from GroupPurchase af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<GroupPurchase> list = query.list();
+        return list;
     }
 
     /**
@@ -166,7 +228,8 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public List<GroupPurchase> searchListDefined(String HQL) {
-        return null;
+        Query query = getSession().createQuery(HQL);
+        return query.list();
     }
 
     /**
@@ -177,6 +240,40 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public boolean exists(Long id) {
-        return false;
+        GroupPurchase model = (GroupPurchase) getSession().get(GroupPurchase.class, id);
+        if (model != null)
+            return true;
+        else
+            return false;
     }
+
+    /**
+     * 查询商品的团购活动记录
+     *
+     * @param model 商品对象
+     * @return 返回活动记录结果
+     */
+    @Override
+    public GroupPurchase getByGoods(Goods model) {
+        String hql = "from GroupPurchase gp where gp.goods.id=?";
+        Query query = getSession().createQuery(hql);
+        query.setBigInteger(0, BigInteger.valueOf(model.getId()));
+        return (GroupPurchase) query.uniqueResult();
+    }
+
+    /**
+     * 根据提供的参数，查询人数排名前N的团购活动记录
+     *
+     * @param top 排名数
+     * @return 返回活动记录结果
+     */
+    @Override
+    public List<GroupPurchase> listAllTop(int top) {
+        String hql = "from GroupPurchase order by numberPart DESC";
+        Query query = getSession().createQuery(hql);
+        query.setFirstResult(0);
+        query.setMaxResults(top);
+        return query.list();
+    }
+
 }

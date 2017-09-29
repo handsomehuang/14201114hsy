@@ -1,12 +1,16 @@
 package com.nchu.dao.impl;
 
 import com.nchu.dao.GoodsDao;
+import com.nchu.entity.AfterSale;
 import com.nchu.entity.Goods;
 
-import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.nchu.util.DateUtil;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class GoodsDaoImpl implements GoodsDao {
     @Autowired
     SessionFactory sessionFactory;
-    /**
-     * 获取Hibernate 的session
-     *
-     * @return
-     */
-    private Session getSession() {
+
+    Session getSession() {
         return sessionFactory.getCurrentSession();
     }
 
@@ -37,8 +37,40 @@ public class GoodsDaoImpl implements GoodsDao {
      * @param shopId 要下架商品的店铺id
      */
     @Override
-    public void removeGoodsByShop(Serializable shopId) {
+    public void removeGoodsByShop(Long shopId) {
+        String hql = "update Goods g set g.isonshelves=? where g.shop.id=?";
+        Query query = getSession().createQuery(hql);
+        query.setByte(0, (byte) 0);
+        query.setBigInteger(1, BigInteger.valueOf(shopId));
+        query.executeUpdate();
+    }
 
+    /**
+     * 根据商品关键字模糊查询商品
+     *
+     * @param keyword 商品关键字
+     */
+    @Override
+    public List<Goods> searchByName(String keyword) {
+        String hql = "from Goods where name like '%%" + keyword + "%%'";
+        Query query = getSession().createQuery(hql);
+        return query.list();
+    }
+
+    /**
+     * 根据商品关键字模糊查询商品
+     *
+     * @param keyword  商品关键字
+     * @param page
+     * @param pageSize
+     */
+    @Override
+    public List<Goods> searchByNamePage(String keyword, int page, int pageSize) {
+        String hql = "from Goods where name like '%%" + keyword + "%%'";
+        Query query = getSession().createQuery(hql);
+        query.setFirstResult((1 - page) * pageSize);
+        query.setMaxResults(pageSize);
+        return query.list();
     }
 
     /**
@@ -49,7 +81,10 @@ public class GoodsDaoImpl implements GoodsDao {
      */
     @Override
     public Long save(Goods model) {
-        return null;
+        model.setGmtCreate(DateUtil.getCurrentTimestamp());
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().save(model);
+        return model.getId();
     }
 
     /**
@@ -59,7 +94,8 @@ public class GoodsDaoImpl implements GoodsDao {
      */
     @Override
     public void saveOrUpdate(Goods model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().saveOrUpdate(model);
     }
 
     /**
@@ -69,7 +105,8 @@ public class GoodsDaoImpl implements GoodsDao {
      */
     @Override
     public void update(Goods model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().update(model);
     }
 
     /**
@@ -79,7 +116,7 @@ public class GoodsDaoImpl implements GoodsDao {
      */
     @Override
     public void merge(Goods model) {
-
+        getSession().merge(model);
     }
 
     /**
@@ -89,7 +126,8 @@ public class GoodsDaoImpl implements GoodsDao {
      */
     @Override
     public void delete(Long id) {
-
+        Goods model = (Goods) getSession().get(Goods.class, id);
+        getSession().delete(model);
     }
 
     /**
@@ -99,7 +137,9 @@ public class GoodsDaoImpl implements GoodsDao {
      */
     @Override
     public void deleteAll(List<Goods> goods) {
-
+        for (int i = 0; i < goods.size(); i++) {
+            getSession().delete(goods.get(i));
+        }
     }
 
     /**
@@ -109,7 +149,7 @@ public class GoodsDaoImpl implements GoodsDao {
      */
     @Override
     public void deleteObject(Goods model) {
-
+        getSession().delete(model);
     }
 
     /**
@@ -120,7 +160,8 @@ public class GoodsDaoImpl implements GoodsDao {
      */
     @Override
     public Goods get(Long id) {
-        return null;
+        Goods model = (Goods) getSession().get(AfterSale.class, id);
+        return model;
     }
 
     /**
@@ -129,8 +170,10 @@ public class GoodsDaoImpl implements GoodsDao {
      * @return 返回记录条数
      */
     @Override
-    public int countAll() {
-        return 0;
+    public Long countAll() {
+        String sql = "select count(*) from Goods";
+        Long count = (Long) getSession().createQuery(sql).uniqueResult();
+        return count;
     }
 
     /**
@@ -140,7 +183,9 @@ public class GoodsDaoImpl implements GoodsDao {
      */
     @Override
     public List<Goods> listAll() {
-        return null;
+        String hql = "from Goods";
+        Query query = getSession().createQuery(hql);
+        return query.list();
     }
 
     /**
@@ -153,7 +198,29 @@ public class GoodsDaoImpl implements GoodsDao {
      */
     @Override
     public List<Goods> searchPage(Map<String, Object> conditions, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from Goods";
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from Goods g where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<Goods> list = query.list();
+        return list;
     }
 
     /**
@@ -168,7 +235,30 @@ public class GoodsDaoImpl implements GoodsDao {
      */
     @Override
     public List<Goods> searchPageByOrder(Map<String, Object> conditions, String orderBy, String order, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from Goods order by " + orderBy + " " + order;
+            System.out.println("test.....");
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from Goods af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<Goods> list = query.list();
+        return list;
     }
 
     /**
@@ -179,7 +269,8 @@ public class GoodsDaoImpl implements GoodsDao {
      */
     @Override
     public List<Goods> searchListDefined(String HQL) {
-        return null;
+        Query query = getSession().createQuery(HQL);
+        return query.list();
     }
 
     /**
@@ -190,6 +281,10 @@ public class GoodsDaoImpl implements GoodsDao {
      */
     @Override
     public boolean exists(Long id) {
-        return false;
+        Goods model = (Goods) getSession().get(Goods.class, id);
+        if (model != null)
+            return true;
+        else
+            return false;
     }
 }

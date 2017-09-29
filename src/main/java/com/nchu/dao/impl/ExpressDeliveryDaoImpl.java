@@ -1,10 +1,16 @@
 package com.nchu.dao.impl;
 
 import com.nchu.dao.ExpressDeliveryDao;
+import com.nchu.entity.Announcement;
+import com.nchu.entity.Evaluation;
 import com.nchu.entity.ExpressDelivery;
+
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.nchu.util.DateUtil;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional
-public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
+public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao {
     @Autowired
-    SessionFactory sessionFactory;
-    /**
-     * 获取Hibernate 的session
-     *
-     * @return
-     */
+    SessionFactory sessionfactory;
+
     private Session getSession() {
-        return sessionFactory.getCurrentSession();
+        return sessionfactory.getCurrentSession();
     }
 
     /**
@@ -37,7 +39,10 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      */
     @Override
     public Long save(ExpressDelivery model) {
-        return null;
+        model.setGmtCreate(DateUtil.getCurrentTimestamp());
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().save(model);
+        return model.getId();
     }
 
     /**
@@ -47,7 +52,8 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      */
     @Override
     public void saveOrUpdate(ExpressDelivery model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().saveOrUpdate(model);
     }
 
     /**
@@ -57,7 +63,8 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      */
     @Override
     public void update(ExpressDelivery model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().update(model);
     }
 
     /**
@@ -67,7 +74,8 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      */
     @Override
     public void merge(ExpressDelivery model) {
-
+        model.setGmtModified(DateUtil.getCurrentTimestamp());
+        getSession().merge(model);
     }
 
     /**
@@ -77,7 +85,7 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      */
     @Override
     public void delete(Long id) {
-
+        getSession().delete(id);
     }
 
     /**
@@ -87,7 +95,9 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      */
     @Override
     public void deleteAll(List<ExpressDelivery> expressDeliveries) {
-
+        for (int i = 0; i < expressDeliveries.size(); i++) {
+            getSession().delete(expressDeliveries.get(i));
+        }
     }
 
     /**
@@ -97,7 +107,7 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      */
     @Override
     public void deleteObject(ExpressDelivery model) {
-
+        getSession().delete(model);
     }
 
     /**
@@ -108,7 +118,7 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      */
     @Override
     public ExpressDelivery get(Long id) {
-        return null;
+        return (ExpressDelivery) getSession().get(ExpressDelivery.class, id);
     }
 
     /**
@@ -117,8 +127,9 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      * @return 返回记录条数
      */
     @Override
-    public int countAll() {
-        return 0;
+    public Long countAll() {
+        String sql = "select count(*) from ExpressDelivery";
+        return (Long) getSession().createSQLQuery(sql).uniqueResult();
     }
 
     /**
@@ -128,7 +139,9 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      */
     @Override
     public List<ExpressDelivery> listAll() {
-        return null;
+        String hql = "from ExpressDelivery";
+        Query query = getSession().createQuery(hql);
+        return query.list();
     }
 
     /**
@@ -141,7 +154,29 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      */
     @Override
     public List<ExpressDelivery> searchPage(Map<String, Object> conditions, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from ExpressDelivery";
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from ExpressDelivery af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<ExpressDelivery> list = query.list();
+        return list;
     }
 
     /**
@@ -156,7 +191,31 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      */
     @Override
     public List<ExpressDelivery> searchPageByOrder(Map<String, Object> conditions, String orderBy, String order, int page, int pageSize) {
-        return null;
+        Session session = getSession();
+        String hql;
+        if (conditions == null) {
+            hql = "from ExpressDelivery order by " + orderBy + " " + order;
+            System.out.println("test.....");
+        } else {
+            Iterator<String> iterator = conditions.keySet().iterator();
+            StringBuilder stringBuilder = new StringBuilder("from ExpressDelivery af where ");
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                stringBuilder.append(key + " =  " + conditions.get(key));
+                if (iterator.hasNext()) {
+                    stringBuilder.append(" AND ");
+                }
+            }
+            hql = stringBuilder.toString();
+        }
+
+        Query query = session.createQuery(hql);
+        int startIndex = (page - 1) * pageSize;
+        query.setFirstResult(startIndex);
+        query.setMaxResults(pageSize);
+        List<ExpressDelivery> list = query.list();
+
+        return list;
     }
 
     /**
@@ -167,7 +226,8 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      */
     @Override
     public List<ExpressDelivery> searchListDefined(String HQL) {
-        return null;
+        Query query = getSession().createQuery(HQL);
+        return query.list();
     }
 
     /**
@@ -178,6 +238,23 @@ public class ExpressDeliveryDaoImpl implements ExpressDeliveryDao{
      */
     @Override
     public boolean exists(Long id) {
-        return false;
+        Announcement model = (Announcement) getSession().get(Announcement.class, id);
+        if (model != null)
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * 根据快递名称name，获得该快递对象
+     *
+     * @param name
+     */
+    @Override
+    public ExpressDelivery getByName(String name) {
+        String hql = "from ExpressDelivery where name=?";
+        Query query = getSession().createQuery(hql);
+        query.setString(0, name);
+        return (ExpressDelivery) query.uniqueResult();
     }
 }

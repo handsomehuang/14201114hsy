@@ -141,7 +141,7 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public List<Shop> listAll() {
-        String hql = "from Shop ";
+        String hql = "from Shop where islocked = 0 and isVerify=1";
         Query query = getSession().createQuery(hql);
         return query.list();
     }
@@ -254,9 +254,9 @@ public class ShopDaoImpl implements ShopDao {
      */
     @Override
     public Shop getByUser(User model) {
-        String hql = "from Shop where Shop.user.id=?";
+        String hql = "from Shop where userId =:uid";
         Query query = getSession().createQuery(hql);
-        query.setBigInteger(0, BigInteger.valueOf(model.getId()));
+        query.setParameter("uid", model.getId());
         return (Shop) query.uniqueResult();
     }
 

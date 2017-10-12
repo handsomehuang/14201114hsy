@@ -1,5 +1,6 @@
 package com.nchu.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -15,12 +16,13 @@ import java.sql.Timestamp;
 @Table(name = "goods_picture")
 @DynamicInsert
 @DynamicUpdate
-public class GoodsPicture implements Serializable{
+@JsonIgnoreProperties({"goods", "gmtCreate", "gmtModified"})
+public class GoodsPicture implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private long id;
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private long id;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
     /*图片存储URL地址*/

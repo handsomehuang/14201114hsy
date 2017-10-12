@@ -59,7 +59,7 @@ public class UserDaoImpl implements UserDao {
         String hql = "select count(*) from User where account=:ac";
         Query query = getSession().createQuery(hql);
         query.setParameter("ac", account);
-        int count = (int) query.uniqueResult();
+        long count = (long) query.uniqueResult();
         if (count != 0) {
             return true;
         }

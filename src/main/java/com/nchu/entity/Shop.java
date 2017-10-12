@@ -1,5 +1,6 @@
 package com.nchu.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.LazyCollection;
@@ -17,6 +18,8 @@ import java.util.Set;
 @Entity
 @DynamicInsert
 @DynamicUpdate
+@Table(name = "shop")
+@JsonIgnoreProperties(value = {"goods", "user", "saletype", "gmtModified"})
 public class Shop implements Serializable {
     /**
      *

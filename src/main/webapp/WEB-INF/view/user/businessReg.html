@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>商家注册</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="/js/iview/styles/iview.css">
+    <style>
+        .head-title {
+            color: #CC0033;
+            font-size: 40px;
+            margin-left: -30px;
+        }
+
+        .head-band {
+            margin-top: 30px;
+            box-shadow: 0px 5px 2px #f0f0f0;
+        }
+
+        .logoPic {
+            width: 70px;
+            height: 60px;
+        }
+
+        .regTitle h1 {
+            margin-top: 20px;
+            color: #b52a31;
+        }
+
+        .stepRow {
+            margin-top: 40px;
+        }
+
+        .formRow {
+            margin-top: 30px;
+            min-height: 500px;
+        }
+
+        .formStp3 {
+            color: #ed3f14;
+            margin-top: 30px;
+        }
+
+        .formStp3 p {
+            font-size: 20px;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="app" v-cloak>
+    <!--顶部logo-->
+    <row class="head-band">
+        <row>
+            <i-col :lg="{span:1,offset:2}" :xs="{span:6,offset:1}">
+                <a :href="url.router.index"><img src="/img/logo.png" class="logoPic"/></a>
+            </i-col>
+            <i-col :lg="{span:5}" :xs="{span:16,offset:1}">
+                <h1 class="head-title">惠Go</h1>
+            </i-col>
+        </row>
+        <row class="regTitle" align="bottom" type="flex" justify="center">
+            <i-col :lg="{span:5,offset:9}" :xs="{span:15,offset:5}">
+                <h1 style="font-size: 45px">商家注册&nbsp;&nbsp;<Icon type="ribbon-b"></Icon>
+                </h1>
+            </i-col>
+            <i-col :lg="{span:2,offset:6}" :xs="{span:7,offset:17}">已有账号?<a :href="url.router.login">立即登录</a></i-col>
+        </row>
+    </row>
+
+    <row>
+        <!--步骤条-->
+        <row class="stepRow">
+            <i-col class="stepCol" :lg="{span:18,offset:5}" :xs="{span:22,offset:1}">
+                <Steps :current="currentStep">
+                    <Step title="账户信息" content="填写个人账户信息"></Step>
+                    <Step title="店铺信息" content="填写店铺信息"></Step>
+                    <Step title="注册成功" content="注册完成,等待审核"></Step>
+                </Steps>
+            </i-col>
+        </row>
+
+        <row class="formRow">
+            <i-col class="formCol" :lg="{span:8,offset:8}" :xs="{span:22,offset:1}">
+                <!--注册信息表单Step1-->
+                <i-form :label-width="75" ref="formStp" :model="formStp" :rules="ruleValidate"
+                        label-position="left" v-if="currentStep === 0" key="step1">
+                    <form-item label="账 号:" prop="account">
+                        <i-input v-model="formStp.account" placeholder="请输入账号" size="large"></i-input>
+                    </form-item>
+
+                    <form-item label="密 码:" prop="password">
+                        <i-input v-model="formStp.password" placeholder="请输入密码" type="password"
+                                 size="large"></i-input>
+                    </form-item>
+
+                    <form-item label="确认密码:" prop="passwordCheck">
+                        <i-input v-model="formStp.passwordCheck" placeholder="输入相同密码" type="password"
+                                 size="large"></i-input>
+                    </form-item>
+                    <form-item label="手 机:" prop="tel">
+                        <i-input v-model="formStp.tel" placeholder="请输入手机号码" size="large"></i-input>
+                    </form-item>
+                    <form-item label="邮 箱" prop="mail">
+                        <auto-complete
+                                v-model="formStp.mail"
+                                @on-search="handleSearch"
+                                placeholder="请输入邮箱" size="large">
+                            <i-option v-for="item in tipsData" :value="item" :key="item">{{ item }}</i-option>
+                        </auto-complete>
+                    </form-item>
+                    <form-item>
+                        <!--nextStep('formStp')-->
+                        <i-button type="primary" @click="nextStep('formStp')" long>已确认信息,下一步</i-button>
+                    </form-item>
+                </i-form>
+
+                <!--注册信息表单Step2-->
+                <i-form :label-width="75" ref="formStp" :model="formStp" :rules="ruleValidate"
+                        label-position="left" v-if="currentStep === 1" key="step2">
+                    <form-item label="店铺名称:" prop="shopName">
+                        <i-input v-model="formStp.shopName" placeholder="请输入店铺名称" size="large"></i-input>
+                    </form-item>
+
+                    <form-item label="真实姓名:" prop="realName">
+                        <i-input v-model="formStp.realName" placeholder="输入个人真实姓名" size="large"></i-input>
+                    </form-item>
+
+                    <form-item label="身份证号:" prop="idCard">
+                        <i-input v-model="formStp.idCard" placeholder="输入身份证号" size="large"></i-input>
+                    </form-item>
+                    <form-item label="销售类型:" prop="saleType">
+                        <i-select v-model="formStp.saleType" placeholder="请选择">
+                            <i-option v-for="saleType in saleTypeList" :value="saleType.id" :key="saleType.id">
+                                {{saleType.name}}
+                            </i-option>
+                        </i-select>
+                    </form-item>
+
+                    <form-item label="营业执照:">
+                        <Upload :action="url.uploadUrl" :on-success="handleSuccess" accept="image/*" ref="upload"
+                                :before-upload="handleBeforeUpload" :on-error="uploadFailed" :show-upload-list="true">
+                            <i-button type="ghost" icon="ios-cloud-upload-outline">上传文件</i-button>
+                        </Upload>
+                    </form-item>
+
+                    <form-item label="执照编号:" prop="licenseCode">
+                        <i-input v-model="formStp.licenseCode" placeholder="输入营业执照编号" size="large"></i-input>
+                    </form-item>
+
+                    <form-item>
+                        <i-button type="primary" @click="nextStep('formStp')" long :loading="loading">
+                            <!--提交按钮点击后显示加载状态-->
+                            <span v-if="!loading"> 已确认信息,下一步</span>
+                            <span v-else>正在提交...</span>
+                        </i-button>
+                        <a @click="preStep">
+                            <Icon type="arrow-left-a"></Icon> &nbsp;信息有误,返回上一步</a>
+                    </form-item>
+                </i-form>
+
+                <i-col v-if="currentStep === 2" class="formStp3" :lg="{offset:6}" :xs="{offset:4}">
+                    <h1>
+                        <Icon type="checkmark-circled"></Icon>&nbsp;&nbsp;恭喜,注册成功!
+                    </h1>
+                    <p>验证邮件已经发送到您的邮箱,请尽快验证!</p><br>
+                    <p style="color: #495060;font-size: 15px">Tips:商家申请需管理员审核,审核周期为1~2个工作日</p><br>
+                    <a :href="url.router.login" style="font-size: 17px;margin-left: 50px">
+                        <Icon type="reply"></Icon>
+                        前往登录</a>
+                </i-col>
+            </i-col>
+        </row>
+    </row>
+
+    <my-footer></my-footer>
+</div>
+<script type="text/javascript" src="/js/vue/vue.js"></script>
+<script type="text/javascript" src="/js/iview/iview.js"></script>
+<script type="text/javascript" src="/js/axios/axios.min.js"></script>
+<script type="text/javascript" src="/js/project/webRouter.js"></script>
+<script type="text/javascript" src="/js/project/footer.js"></script>
+<script type="text/javascript" src="/js/project/businessReg.js"></script>
+</body>
+</html>

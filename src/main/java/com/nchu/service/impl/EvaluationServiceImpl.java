@@ -1,17 +1,32 @@
 package com.nchu.service.impl;
 
+import com.nchu.dao.EvaluationDao;
+import com.nchu.dao.GoodsDao;
 import com.nchu.entity.Evaluation;
 import com.nchu.entity.Goods;
 import com.nchu.entity.User;
+import com.nchu.enumdef.UserRoleType;
+import com.nchu.exception.EvaluationException;
 import com.nchu.service.EvaluationService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 2017-9-23 18:13:14
  * 商品评论相关业务接口实现类
  */
+@Service
 public class EvaluationServiceImpl implements EvaluationService {
+
+    @Autowired
+    EvaluationDao ed;
+
     /**
      * TODO 添加评价
      * (生成一条系统消息通知商家)
@@ -21,7 +36,12 @@ public class EvaluationServiceImpl implements EvaluationService {
      */
     @Override
     public boolean addEvaluation(Evaluation evaluation) {
-        return false;
+        Long id = ed.save(evaluation);
+        //系统消息未实现
+        if (id == evaluation.getId()) {
+            return true;
+        } else
+            return false;
     }
 
     /**
@@ -34,7 +54,9 @@ public class EvaluationServiceImpl implements EvaluationService {
      */
     @Override
     public List<Evaluation> listGoodsEvaluation(Goods goods, int page, int pageSize) {
-        return null;
+        Map<String, Object> conditions = new HashMap<>();
+        conditions.put("goodsid", goods.getId());
+        return ed.searchPage(conditions, page, pageSize);
     }
 
     /**
@@ -45,7 +67,15 @@ public class EvaluationServiceImpl implements EvaluationService {
      * @return 操作结果
      */
     @Override
-    public boolean clearAllEvaluation(Goods goods, User operator) {
-        return false;
+    public boolean clearAllEvaluation(Goods goods, User operator) throws EvaluationException {
+        if (Integer.valueOf(operator.getRole()) == UserRoleType.ADMIN.getIndex()) {
+            try {
+                ed.deleteAllByGoods(goods);
+                return true;
+            } catch (Exception e) {
+                throw new EvaluationException("清空评价异常");
+            }
+        } else
+            throw new EvaluationException("清空评价非法操作者");
     }
 }

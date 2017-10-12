@@ -1,17 +1,39 @@
 package com.nchu.service.impl;
 
+import com.nchu.dao.GoodsDao;
+import com.nchu.dao.GroupPurchaseDao;
+import com.nchu.dao.ParticipateGroupDao;
+import com.nchu.entity.Goods;
 import com.nchu.entity.GroupPurchase;
+import com.nchu.entity.ParticipateGroup;
 import com.nchu.entity.Saletype;
 import com.nchu.entity.User;
+import com.nchu.exception.GoodsException;
+import com.nchu.exception.GroupPurchaseException;
 import com.nchu.service.GroupPurchaseService;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 2017-9-23 18:14:55
  * 团购活动相关业务接口实现类
  */
+@Service
 public class GroupPurchaseServiceImpl implements GroupPurchaseService {
+
+    @Autowired
+    GroupPurchaseDao groupPurchaseDao;
+    @Autowired
+    ParticipateGroupDao participateGroupDao;
+    @Autowired
+    GoodsDao goodsDao;
+
     /**
      * TODO 创建团购活动
      * 校验团购活动实体的user对象是否为商家
@@ -37,8 +59,13 @@ public class GroupPurchaseServiceImpl implements GroupPurchaseService {
      * @return 操作结果
      */
     @Override
-    public boolean joinGroup(User user, GroupPurchase groupPurchase) {
-        return false;
+    public boolean joinGroup(User user, GroupPurchase groupPurchase) throws GroupPurchaseException {
+        try {
+            participateGroupDao.createParticipateGroup(user.getId(), groupPurchase.getId());
+            return true;
+        } catch (Exception e) {
+            throw new GroupPurchaseException("团购活动创建异常");
+        }
     }
 
     /**
@@ -50,8 +77,13 @@ public class GroupPurchaseServiceImpl implements GroupPurchaseService {
      * @return 操作结果
      */
     @Override
-    public boolean exitGroup(User user, GroupPurchase groupPurchase) {
-        return false;
+    public boolean exitGroup(User user, GroupPurchase groupPurchase) throws GroupPurchaseException {
+        try {
+            participateGroupDao.removeParticipateGroup(user.getId(), groupPurchase.getId());
+            return true;
+        } catch (Exception e) {
+            throw new GroupPurchaseException("退出团购活动异常");
+        }
     }
 
     /**
@@ -63,7 +95,12 @@ public class GroupPurchaseServiceImpl implements GroupPurchaseService {
      */
     @Override
     public List<User> listGroupUsers(GroupPurchase groupPurchase) {
-        return null;
+        List<ParticipateGroup> list = participateGroupDao.getAllByGroupPurchase(groupPurchase);
+        List<User> userList = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            userList.add(list.get(i).getUser());
+        }
+        return userList;
     }
 
     /**
@@ -90,13 +127,23 @@ public class GroupPurchaseServiceImpl implements GroupPurchaseService {
      * @return 团购活动列表
      */
     @Override
-    public List<GroupPurchase> searchByGoods(String keywords, int page, int pageSize) {
-        return null;
+    public List<GroupPurchase> searchByGoods(String keywords, int page, int pageSize) throws GoodsException {
+        List<GroupPurchase> groupPurchaseList = new ArrayList<>();
+        List<Goods> goodsList = goodsDao.searchByNamePage(keywords, page, pageSize);
+        if (goodsList == null) {
+            System.out.println("TIPS:要查找的商品不存在");
+            throw new GoodsException("要查找的商品不存在");
+        } else {
+            for (Goods goods : goodsList) {
+                groupPurchaseList.add(goods.getGroupPurchase());
+            }
+        }
+        return groupPurchaseList;
     }
 
     /**
      * TODO 通过商品类型获取团购
-     * 先通过类型搜索商已上架商品,再在团购活动表中搜索含有对应商品id的团购活动
+     * 先通过类型搜索已上架商品,再在团购活动表中搜索含有对应商品id的团购活动
      *
      * @param saletype 商品类型
      * @param page     页码
@@ -105,7 +152,14 @@ public class GroupPurchaseServiceImpl implements GroupPurchaseService {
      */
     @Override
     public List<GroupPurchase> searchByType(Saletype saletype, int page, int pageSize) {
-        return null;
+        Map<String, Object> conditions = new HashMap<>();
+        conditions.put("category", saletype.getId());
+        List<Goods> listGoods = goodsDao.searchPage(conditions, page, pageSize);
+        List<GroupPurchase> listGP = new ArrayList<>();
+        for (int i = 0; i < listGoods.size(); i++) {
+            listGP.add(groupPurchaseDao.getByGoods(listGoods.get(i)));
+        }
+        return listGP;
     }
 
     /**
@@ -117,7 +171,16 @@ public class GroupPurchaseServiceImpl implements GroupPurchaseService {
      */
     @Override
     public List<GroupPurchase> listAllGroup(int page, int pageSize) {
-        return null;
+        return groupPurchaseDao.searchPage(null, page, pageSize);
+    }
+
+    /**
+     * 获取团购活动页码数
+     */
+    @Override
+    public Long groupPageAccount(int pageSize) {
+        Long count = groupPurchaseDao.countAll();
+        return count / pageSize == 0 ? 1 : count;
     }
 
     /**
@@ -129,6 +192,17 @@ public class GroupPurchaseServiceImpl implements GroupPurchaseService {
      */
     @Override
     public List<GroupPurchase> topGroup(int top) {
-        return null;
+        return groupPurchaseDao.listAllTop(top);
+    }
+
+    /**
+     * TODO 通过ID获取团购记录
+     *
+     * @param groupId 团购ID
+     * @return
+     */
+    @Override
+    public GroupPurchase getById(Long groupId) {
+        return groupPurchaseDao.get(groupId);
     }
 }

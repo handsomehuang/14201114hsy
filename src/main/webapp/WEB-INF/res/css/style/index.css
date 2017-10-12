@@ -1,0 +1,219 @@
+/*
+首页样式
+*/
+* {
+    margin: 0px auto;
+    padding: 0px;
+}
+
+[v-cloak] {
+    display: none;
+}
+
+body {
+    background-color: #f8f8f9;
+}
+
+/*顶部菜单栏样式*/
+.topMenu {
+    min-height: 25px;
+}
+
+.topMenu a {
+    color: #80848f;
+}
+
+.topMenu a:hover {
+    color: #CC0033;
+}
+
+/*搜索样式*/
+.topBarRow {
+    background-color: white;
+    box-shadow: 0px 5px 2px #f0f0f0;
+    min-height: 65px;
+    width: 100%;
+}
+
+.affix-search {
+    z-index: 999;
+    position: absolute;
+    width: 100%;
+}
+
+.topBar {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.logoPic {
+    float: left;
+}
+
+.logoText {
+    float: left;
+    margin-left: 10px;
+}
+
+.content {
+}
+
+/*替换iView默认样式*/
+.ivu-input {
+    border-radius: 0px;
+}
+
+.ivu-input-group-append {
+    border-radius: 0px;
+    border: solid 1px red;
+    color: white;
+    background-color: red;
+}
+
+.ivu-input:focus {
+    border-color: red;
+    outline: 0;
+    box-shadow: 0 0 0 1px rgba(240, 71, 118, 0.2);
+}
+
+.ivu-input:hover {
+    border-color: red;
+}
+
+.searchButton {
+    width: 80px;
+}
+
+/*轮播样式*/
+.carouselRow {
+    margin-top: 25px;
+}
+
+.demo-carousel {
+    height: inherit;
+    width: inherit;
+}
+
+.demo-carousel img {
+    width: 100%;
+    height: 100%;
+}
+
+.saleTypeMenu {
+}
+
+.TopMenuItem {
+    color: white;
+}
+
+.ivu-menu-item-group-title {
+    color: white;
+}
+
+/*iView菜单列表的点击样式*/
+.ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu) {
+    color: white;
+}
+
+/* iView 菜单列表项的鼠标滑过样式*/
+.ivu-menu-vertical .ivu-menu-item:hover, .ivu-menu-vertical .ivu-menu-submenu-title:hover {
+    background: #c10031;
+}
+
+/*单个团购活动列表项的样式*/
+.groupItemDiv {
+    width: 184px;
+    height: 200px;
+    background-color: white;
+    border: solid #dddee1 1px;
+    float: left;
+    margin-top: 10px;
+    margin-left: 5px;
+}
+
+.groupItemDiv:hover {
+    cursor: pointer;
+    box-shadow: 1px 1px 1px #c7c7c7;
+}
+
+.groupItemDiv .price {
+    color: orangered;
+    font-size: 20px;
+}
+
+.groupItemDiv .groupName {
+    color: #495060;
+    text-overflow: ellipsis;
+}
+
+.simpleUserDiv {
+    min-height: 150px;
+}
+
+.simpleUserDiv p {
+    text-align: center;
+}
+
+.simpleUserDiv .ivu-btn {
+    width: 100px;
+    height: 30px;
+    margin-left: 30%;
+    margin-top: 5px;
+}
+
+.userAvatar {
+    margin-left: 40%;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.userTools {
+    margin-left: 10%;
+    color: red;
+}
+
+.userTools:hover {
+    color: #c10031;
+}
+
+/*店铺div*/
+.shopDiv {
+    background-color: white;
+    width: 50%;
+    height: 90px;
+    float: left;
+    border: solid 1px #dddee1;
+}
+
+.shopDiv img {
+    width: 100%;
+    height: 100%;
+}
+
+.shopName {
+    position: absolute;
+    background-color: gray;
+    opacity: 0.8;
+    height: 30px;
+    z-index: 2;
+    color: white;
+    font-size: 20px;
+    display: none;
+}
+
+.shopDiv:hover .shopName {
+    display: block;
+}
+
+.becomeBusiness {
+    background-color: white;
+    width: 100%;
+    height: 180px;
+    float: left;
+}
+
+.becomeBusiness img {
+    width: 100%;
+    height: 100%;
+}

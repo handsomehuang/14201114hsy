@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <link href="/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/css/style/mystyle.css" rel="stylesheet"/>
+    <title>我的收货地址</title>
+</head>
+<body>
+<div class="navbar navbar-default" role="navigation" style="padding-left:20px;margin-bottom:0px">
+    <div>
+        <label class="navbar-text navbar-left" id="Hello">hi，xx用户</label>
+        <button class="btn btn-link btn-lg navbar-left">消息（0）</button>
+        <button class="btn btn-link btn-lg navbar-right" style="margin-right:100px">联系客服</button>
+        <button class="btn btn-link btn-lg navbar-right">卖家中心</button>
+        <button class="btn btn-link btn-lg navbar-right">商品分类</button>
+        <button class="btn btn-link btn-lg navbar-right">收藏夹</button>
+        <button class="btn btn-link btn-lg navbar-right">个人中心</button>
+        <button class="btn btn-link btn-lg navbar-right">我的惠Go</button>
+        <button class="btn btn-link btn-lg navbar-right">惠Go网首页</button>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel panel-heading row flexbox">
+        <h1 class="col-md-2  text-left">我的惠Go</h1>
+        <a href="/person" class="btn btn-link btn-lg col-md-1">首页</a>
+        <a href="##" class="btn btn-link btn-lg col-md-1">账户设置</a>
+        <a href="##" class="btn btn-link btn-lg col-md-1">消息</a>
+        <div class="col-md-3 col-md-offset-3">
+            <form action="##" class="navbar-form " rol="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="请输入关键词"/>
+                </div>
+                <button type="submit" class="btn btn-default">搜索</button>
+            </form>
+        </div>
+    </div>
+    <div class="panel panel-body row" style="padding:0">
+        <ul class="list-unstyled">
+            <li class="col-md-2">
+                <div class="panel panel-default ">
+                    <ul class="nav nav-pills nav-stacked text-center" style="font-size:20px">
+                        <li><img src="http://img.mukewang.com/5434eba100014fe906000338.png"
+                                 style="margin-top:5px;height: 88%; width: 44%"></li>
+                        <li><h2>账户设置</h2></li>
+                        <li><a href="/person">安全设置</a></li>
+                        <li><a href="/personal_Information">个人资料</a></li>
+                        <li><a href="/personal_Address">收货地址</a></li>
+                        <li><a href="##">支付方式绑定设置</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li class="col-md-10">
+                <div class="panel panel-default">
+                    <div class="form-group flexbox">
+                        <label for="addAddress" class="col-md-1 control-label ">收货地址：</label>
+                        <button id="addAddress" class="btn btn-link" data-toggle="modal" data-target="#myModal_new">
+                            新增收货地址
+                        </button>
+                    </div>
+                    <div class="form-group flexbox">
+                        <ul class="col-md-12  list-unstyled">
+                            <li class="row">
+                                <ul class="list-unstyled list-inline">
+                                    <li class="col-md-5 "><label><h4 id="txt_address">xx省xx市xx县</h4></label></li>
+                                    <li><a href="##" data-toggle="modal" data-target="#myModal_modify">修改</a></li>
+                                    <li><a href="##">删除</a></li>
+                                </ul>
+                            </li>
+                            <li class="row">
+                                <ul class="list-unstyled list-inline">
+                                    <li class="col-md-5 "><label><h4>xx省xx市xx县</h4></label></li>
+                                    <li><a href="##">修改</a></li>
+                                    <li><a href="##">删除</a></li>
+                                </ul>
+                            </li>
+                            <li class="row">
+                                <ul class="list-unstyled list-inline">
+                                    <li class="col-md-5 "><label><h4>xx省xx市xx县</h4></label></li>
+                                    <li><a href="##">修改</a></li>
+                                    <li><a href="##">删除</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="panel panel-footer row">
+        <div class="col-md-12">
+            <div class="col-md-1 col-md-offset-4 text-center">
+                <ul class="list-unstyled">
+                    <li><label>关于惠Go网</label>
+                    <li>
+                        <button class="btn btn-link" type="button">帮助中心</button>
+                    <li>
+                        <button class="btn btn-link" type="button">诚聘英才</button>
+                    <li>
+                        <button class="btn btn-link" type="button">法律声明</button>
+                </ul>
+            </div>
+            <div class="col-md-1 text-center">
+                <ul class="list-unstyled">
+                    <li><label>买家中心</label>
+                    <li>
+                        <button class="btn btn-link" type="button">在线答疑</button>
+                    <li>
+                        <button class="btn btn-link" type="button">服务保障</button>
+                </ul>
+            </div>
+            <div class="col-md-1 text-center">
+                <ul class="list-unstyled">
+                    <li><label>卖家中心</label>
+                    <li>
+                        <button class="btn btn-link" type="button">在线咨询</button>
+                    <li>
+                        <button class="btn btn-link" type="button">商品报名</button>
+                    <li>
+                        <button class="btn btn-link" type="button">商家规则</button>
+                    <li>
+                        <button class="btn btn-link" type="button">规则通知</button>
+                </ul>
+            </div>
+            <div class="col-md-1 text-center">
+                <ul class="list-unstyled">
+                    <li><label>有话要说</label>
+                    <li>
+                        <button class="btn btn-link" type="button">客服热线</button>
+                    <li>
+                        <button class="btn btn-link" type="button">廉政举报</button>
+                    <li>
+                        <button class="btn btn-link" type="button">我要投诉</button>
+                </ul>
+            </div>
+            <div class="col-md-1 text-center">
+                <ul class="list-unstyled">
+                    <li><label>服务保障</label>
+                    <li>
+                        <button class="btn btn-link" type="button">七天无理由退换货</button>
+                    <li>
+                        <button class="btn btn-link" type="button">维修/保养</button>
+                    <li>
+                        <button class="btn btn-link" type="button">购买延保服务</button>
+                    <li>
+                        <button class="btn btn-link" type="button">退换货政策</button>
+                </ul>
+            </div>
+        </div>
+        <p>&nbsp;
+        <p>&nbsp;
+            <div class="col-md-12">
+                <div class="row text-center">
+                    <a>关于网站</a>&nbsp;
+                    <a>帮助中心</a>&nbsp;
+                    <a>开放平台</a>&nbsp;
+                    <a>招聘信息</a>&nbsp;
+                    <a>联系我们</a>&nbsp;
+                    <a>网站合作</a>&nbsp;
+                    <a>法律声明及隐私权政策</a>&nbsp;
+                    <a>知识产权</a>&nbsp;
+                    <a>廉政举报</a>&nbsp;
+                </div>
+        <p>&nbsp;
+        <div class="row text-center">
+            <label>增值电信业务经营许可证：xxx-xxxx</label>
+            <label>网络文化经营许可证：xxx-xxxx</label>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="modal fade " id="myModal_new" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_new"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel_new">新增收货地址</h4>
+            </div>
+            <div class="modal-body">
+                <h3>收货地址：</h3>
+                <input type="text" class="form-control" id="modify_address">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary">确认添加</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade " id="myModal_modify" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_modify"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel_modify">修改收货地址</h4>
+            </div>
+            <div class="modal-body">
+                <h3>收货地址：</h3>
+                <input type="text" class="form-control" id="modify_address">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary">提交更改</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script src="/js/jquery/jquery-3.1.1.min.js"></script>
+<script src="/js/bootstrap/bootstrap.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        var userAccount = "";
+        $.ajax({
+            type: "GET", //方法类型
+            url: "user/info/SYSTEM",//请求地址
+            dataType: "json", //数据类型
+            success: function (data) {
+                $("#Hello").html("Hi，" + data.nickName);
+                userAccount = data.account;
+                getAddress(userAccount);
+            }
+        });
+    })
+
+    function getAddress(userAccount) {
+        $.ajax({
+            type: "GET", //方法类型
+            url: "user/express/" + userAccount + "",//请求地址
+            dataType: "json", //数据类型
+            success: function (data) {
+                $("#txt_address").html(data[0]);
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

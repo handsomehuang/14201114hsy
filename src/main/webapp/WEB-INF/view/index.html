@@ -1,14 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="css/my.css"/>
-    <link rel="shortcut icon" type="image/x-icon" href="icon/favicon.ico"/>
+    <title>惠Go</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="js/iview/styles/iview.css">
+    <link rel="stylesheet" type="text/css" href="css/style/index.css">
 </head>
 <body>
-<h2>Hello World!</h2>
+<div id="app" v-cloak>
+    <!--顶部菜单-->
+    <row class="topMenu">
+        <!--如果用户未登录则显示请登录-->
+        <i-col :lg="{span:3,offset:3}" :xs="{span:10,offset:1}" v-if="!isLogin" key="Login">
+            <p>您好,请先&nbsp;<a :href="url.router.login" style="color: red">登录</a>&nbsp;&nbsp;&nbsp;
+                <a :href="url.router.vipReg">免费注册</a></p></i-col>
+        <!--否则获取用户信息并显示-->
+        <i-col :lg="{span:3,offset:3}" :xs="{span:10,offset:1}" v-if="isLogin" key="unLogin">
+            <p>欢迎,&nbsp;<a :href="url.router.userZone" style="color: red">{{user.nickName}}</a>&nbsp;&nbsp;&nbsp;
+                <a @click="logout">注销</a></p></i-col>
 
-<a href="business">business</a>
+        <i-col :lg="{span:4,offset:10}" :xs="{offset:10}" style="max-width: 60%">
+            <a>我的团购</a>&nbsp;&nbsp;
+            <a>收藏夹</a>&nbsp;&nbsp;
+            <a>优惠券</a>&nbsp;&nbsp;
+            <a>帮助</a>
+        </i-col>
+    </row>
+    <!--固定搜索框-->
+    <Affix class="affix-search">
+        <row class="topBarRow">
+            <div class="topBar">
+                <i-col :lg="{span:4,offset:3}" :md="{span:4,offset:2}" :xs="{span:0}">
+                    <a :href="url.router.index">
+                        <img src="/img/logo.png" width="50" height="45" class="logoPic"/>
+                        <h1 style="color: #CC0033;" class="logoText">惠Go</h1></a>
+                </i-col>
+                <i-col :lg="{span:0}" :md="{span:0}" :xs="{span:5,offset:1}">
+                    <h1 style="color: red" class="logoText">惠Go</h1></a>
+                </i-col>
+                <i-col class="searchCol" :lg="{span:10}" :xs="{span:17}">
+                    <i-input v-model="searchVal" placeholder="输入商品名称" class="searchInput" size="large">
+                        <i-button slot="append" icon="ios-search-strong" class="searchButton" @click="search()">搜索
+                        </i-button>
+                    </i-input>
+                </i-col>
+            </div>
+        </row>
+    </Affix>
+    <!--空占位格,占据搜索框悬停导致的底部布局间隙,维持正常布局-->
+    <div class="topBarRow"></div>
 
-<img alt="" src="images/bg.jpg">
+
+    <!--中间内容主体-->
+    <row class="content">
+        <row class="carouselRow">
+            <i-col :lg="{span:4,offset:3}" :xs="{span:0}" style="margin-top: -20px">
+                <i-menu class="saleTypeMenu" style="background-color:#CC0033">
+                    <menu-group title="全部团购分类">
+                        <menu-item v-for="saleType in saleTypeList" :key="saleType.id" :name="saleType.id"
+                                   class="TopMenuItem">
+                            {{saleType.name}}
+                        </menu-item>
+                    </menu-group>
+                </i-menu>
+
+            </i-col>
+            <i-col :lg="{span:12}" style="margin-top: -10px;margin-left: 30px">
+                <h1 style="color: #c10031;">
+                    <Icon type="fireball"></Icon>
+                    热门团购活动
+                </h1>
+            </i-col>
+
+            <i-col :lg="{span:14}">
+                <!--图片轮播框-->
+                <carousel :height="240" :autoplay-speed="3000" autoplay>
+                    <carousel-item v-for="hotGroup in hotGroupList" :key="hotGroup.id">
+                        <div class="demo-carousel"><a @click="routerToGroup(hotGroup.groupId)"><img
+                                :src="hotGroup.groupImg"></a>
+                        </div>
+                    </carousel-item>
+                </carousel>
+            </i-col>
+            <!--商家推荐表-->
+            <i-col :lg="{span:8}">
+                <div class="shopDiv" v-for="shop in shopList" :key="shop.id"><a @click="goToShopInfo(shop.id)">
+                    <div class="shopName">{{shop.name}}</div>
+                    <img :src="shop.logo"></a>
+                </div>
+            </i-col>
+            <i-col :lg="{span:2}">
+                <div class="becomeBusiness"><a :href="url.router.businessReg"><img src="img/becomBus.png"></a></div>
+            </i-col>
+
+            <!--简易用户信息卡片-->
+            <i-col span="4">
+                <card shadow>
+                    <div v-if="isLogin" class="simpleUserDiv">
+                        <a :href="url.router.userZone">
+                            <avatar icon="person" size="large" :src="user.headportrait" class="userAvatar"></avatar>
+                            <p style="color: #495060">{{user.nickName}}</p></a>
+                        <a class="userTools" :href="url.router.personOrder">
+                            <Icon type="ios-list"></Icon>&nbsp;&nbsp;我的订单</a>
+                        <a class="userTools">
+                            <Icon type="chatbox-working"></Icon>&nbsp;&nbsp;消息通知</a><br><br>
+                        <a class="userTools">
+                            <Icon type="chatbox-working"></Icon>&nbsp;&nbsp;我的收藏</a>
+                        <a class="userTools" :href="url.router.userZone">
+                            <Icon type="gear-b"></Icon>&nbsp;&nbsp;个人中心</a>
+                    </div>
+                    <!--未登录时显示-->
+                    <div v-if="!isLogin" class="simpleUserDiv">
+                        <Avatar icon="person" size="large" class="userAvatar"
+                                src="http://benefit-go.oss-cn-hangzhou.aliyuncs.com/headPortrait/default/userDefault.png"></avatar>
+                        <p>Hi,你好</p>
+                        <i-button type="ghost" shape="circle" @click="gotoUrl(url.router.login)">登录</i-button>
+                        <i-button type="ghost" shape="circle" @click="gotoUrl(url.router.vipReg)">注册</i-button>
+                    </div>
+                </card>
+            </i-col>
+        </row>
+        <!--团购商品列表-->
+        <row class="groupList">
+            <i-col :lg="{span:18,offset:3}" :xs="{span:24}" style="background-color: white">
+                <div class="groupItemDiv" v-for="group in groupList" :key="group.id"
+                     @click="routerToGroup(group.groupId)">
+                    <img :src="group.groupImg" style="height: 100%;width: 98%;margin-left: 1%"/>
+                    <p class="groupName">{{group.goodsName}}</p>
+                    <p><span class="price">¥&nbsp;{{group.groupPrice}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span style="color: grey;">原价:&nbsp;<s>{{group.originPrice}}</s></span></p>
+                    <p style="color:#b56e00">团购时间:{{group.startDate}}</p>
+                </div>
+            </i-col>
+        </row>
+        <row type="flex" justify="center" style="margin-top: 20px" v-if="pageCount >1">
+            <i-col :lg="{span:8}" :xs="{span:22,offset:1}">
+                <page :page-size="pageSize" :total="pageSize * pageCount"></page>
+            </i-col>
+        </row>
+    </row><!--contentRow-->
+    <div style="border: solid 1px #e9eaec;width: 90%;margin-left: 5%"></div>
+    <my-footer></my-footer>
+    <back-top :right="10" :bottom="20"></back-top>
+</div>
+<script type="text/javascript" src="js/vue/vue.js"></script>
+<script type="text/javascript" src="js/iview/iview.js"></script>
+<script type="text/javascript" src="js/axios/axios.min.js"></script>
+<script type="text/javascript" src="js/project/webRouter.js"></script>
+<script type="text/javascript" src="js/project/footer.js"></script>
+<script type="text/javascript" src="js/project/index.js"></script>
 </body>
 </html>

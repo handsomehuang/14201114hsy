@@ -5,11 +5,6 @@
     <display-name>SelectClassSystem</display-name>
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
-        <welcome-file>index.htm</welcome-file>
-        <welcome-file>index.jsp</welcome-file>
-        <welcome-file>default.html</welcome-file>
-        <welcome-file>default.htm</welcome-file>
-        <welcome-file>default.jsp</welcome-file>
     </welcome-file-list>
     <!--设置Spring全局系统配置路径-->
     <context-param>
@@ -25,6 +20,9 @@
 
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.nchu.listener.UserSessionListener</listener-class>
     </listener>
     <!--配置spring允许hibernate懒加载,保持session开启-->
     <filter>
@@ -54,13 +52,17 @@
         <!--multipart请求参数设置s-->
         <multipart-config>
             <!--临时文件路径-->
-            <location></location>
+            <location>C:\Windows\Temp</location>
             <!--最大文件大小限制-->
             <max-file-size>2097152</max-file-size>
             <!--整个请求的最大限制容量-->
             <max-request-size>4194304</max-request-size>
         </multipart-config>
     </servlet>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
 
     <servlet-mapping>
         <servlet-name>spring</servlet-name>

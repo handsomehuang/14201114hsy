@@ -1,15 +1,26 @@
 package com.nchu.service.impl;
 
+import com.nchu.dao.ExpressDeliveryDao;
 import com.nchu.entity.ExpressDelivery;
 import com.nchu.entity.User;
+import com.nchu.enumdef.UserRoleType;
+import com.nchu.exception.ExpressException;
 import com.nchu.service.ExpressService;
 
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 /**
  * 2017-9-24 15:48:25
  * 快递表相关业务接口实现类
  */
+@Service
 public class ExpressServiceImpl implements ExpressService{
+
+    @Autowired
+    ExpressDeliveryDao edd;
+
     /**
      * TODO 通过名字获取快递方式
      *
@@ -18,7 +29,7 @@ public class ExpressServiceImpl implements ExpressService{
      */
     @Override
     public ExpressDelivery getExpressByName(String name) {
-        return null;
+        return edd.getByName(name);
     }
 
     /**
@@ -29,7 +40,7 @@ public class ExpressServiceImpl implements ExpressService{
      */
     @Override
     public ExpressDelivery getExpressById(Long id) {
-        return null;
+        return edd.get(id);
     }
 
     /**
@@ -39,7 +50,7 @@ public class ExpressServiceImpl implements ExpressService{
      */
     @Override
     public List<ExpressDelivery> getExpressDelivery() {
-        return null;
+        return edd.listAll();
     }
 
     /**
@@ -50,8 +61,16 @@ public class ExpressServiceImpl implements ExpressService{
      * @return 操作结果
      */
     @Override
-    public boolean addExpress(ExpressDelivery expressDelivery, User operator) {
-        return false;
+    public boolean addExpress(ExpressDelivery expressDelivery, User operator) throws ExpressException {
+        if (Integer.valueOf(operator.getRole()) == UserRoleType.ADMIN.getIndex()) {
+            try {
+                edd.save(expressDelivery);
+                return true;
+            } catch (Exception e) {
+                throw new ExpressException("增加快递异常");
+            }
+        } else
+            throw new ExpressException("增加快递非法操作者");
     }
 
     /**
@@ -62,8 +81,16 @@ public class ExpressServiceImpl implements ExpressService{
      * @return 操作结果
      */
     @Override
-    public boolean deleteExpress(ExpressDelivery expressDelivery, User operator) {
-        return false;
+    public boolean deleteExpress(ExpressDelivery expressDelivery, User operator) throws ExpressException {
+        if (Integer.valueOf(operator.getRole()) == UserRoleType.ADMIN.getIndex()) {
+            try {
+                edd.deleteObject(expressDelivery);
+                return true;
+            } catch (Exception e) {
+                throw new ExpressException("删除快递异常");
+            }
+        } else
+            throw new ExpressException("删除快递非法操作者");
     }
 
     /**
@@ -74,7 +101,15 @@ public class ExpressServiceImpl implements ExpressService{
      * @return 操作结果
      */
     @Override
-    public boolean updateExpress(ExpressDelivery expressDelivery, User operator) {
-        return false;
+    public boolean updateExpress(ExpressDelivery expressDelivery, User operator) throws ExpressException {
+        if (Integer.valueOf(operator.getRole()) == UserRoleType.ADMIN.getIndex()) {
+            try {
+                edd.update(expressDelivery);
+                return true;
+            } catch (Exception e) {
+                throw new ExpressException("更新快递异常");
+            }
+        } else
+            throw new ExpressException("更新快递非法操作者");
     }
 }

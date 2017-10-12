@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>欢迎注册</title>
+    <meta charset="UTF-8">
+    <!--如果页面需要响应式效果则此处的声明不可少-->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"/>
+    <!-- 引入Vue -->
+    <link rel="stylesheet" type="text/css" href="/js/iview/styles/iview.css">
+    <style>
+        h1 {
+            color: #CC0033;
+            font-size: 60px;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+
+        .head-band {
+            margin-top: 50px;
+            box-shadow: 0px 5px 2px #f0f0f0;
+        }
+
+        .logoPic {
+            width: 100px;
+            height: 90px;
+        }
+
+        .regForm {
+            margin-top: 5%;
+        }
+    </style>
+</head>
+<body>
+<div id="app" v-cloak>
+    <!--顶部logo-->
+    <row class="head-band">
+        <row>
+            <i-col :lg="{span:1,offset:2}" :xs="{span:6,offset:1}">
+                <a :href="url.router.index"><img src="/img/logo.png" class="logoPic"/></a>
+            </i-col>
+            <i-col :lg="{span:5}" :xs="{span:16,offset:1}">
+                <h1>会员注册</h1>
+            </i-col>
+        </row>
+        <row>
+            <i-col :lg="{span:5,offset:19}" :xs="{span:7,offset:17}">已有账号?<a :href="url.router.login">立即登录</a></i-col>
+        </row>
+    </row>
+
+    <row style="min-height:600px;">
+        <i-col :lg="{span:8,offset:8}" :xs="{span:22,offset:1}" class="regForm">
+            <i-form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="75"
+                    label-position="left">
+                <form-item label="账 号:" prop="account">
+                    <i-input v-model="formValidate.account" placeholder="请输入账号" size="large"></i-input>
+                </form-item>
+
+                <form-item label="密 码:" prop="password">
+                    <i-input v-model="formValidate.password" placeholder="请输入密码" type="password" size="large"></i-input>
+                </form-item>
+
+                <form-item label="确认密码:" prop="passwordCheck">
+                    <i-input v-model="formValidate.passwordCheck" placeholder="输入相同密码" type="password"
+                             size="large"></i-input>
+                </form-item>
+
+                <form-item label="手 机:" prop="tel">
+                    <i-input v-model="formValidate.tel" placeholder="请输入手机号码" size="large"></i-input>
+                </form-item>
+
+                <form-item label="邮 箱" prop="mail">
+                    <auto-complete
+                            v-model="formValidate.mail"
+                            @on-search="handleSearch"
+                            placeholder="请输入邮箱" size="large">
+                        <i-option v-for="item in tipsData" :value="item" :key="item">{{ item }}</i-option>
+                    </auto-complete>
+                </form-item>
+
+                <form-item>
+                    <i-button type="primary" @click="handleSubmit('formValidate')" size="large" long>提交</i-button>
+                </form-item>
+                <span style="float: right;color: gray">想赚钱?立即<a :href="url.router.businessReg">注册成为商家</a></span>
+            </i-form>
+        </i-col>
+    </row>
+
+    <my-footer></my-footer>
+</div>
+
+<script type="text/javascript" src="/js/vue/vue.js"></script>
+<script type="text/javascript" src="/js/iview/iview.js"></script>
+<script type="text/javascript" src="/js/axios/axios.min.js"></script>
+<script type="text/javascript" src="/js/project/webRouter.js"></script>
+<script type="text/javascript" src="/js/project/footer.js"></script>
+<script type="text/javascript" src="/js/project/vipReg.js"></script>
+</body>
+</html>

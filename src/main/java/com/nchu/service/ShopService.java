@@ -1,7 +1,10 @@
 package com.nchu.service;
 
+import com.nchu.entity.Saletype;
 import com.nchu.entity.Shop;
 import com.nchu.entity.User;
+import com.nchu.exception.ShopException;
+import com.nchu.exception.UserServiceException;
 
 import java.util.List;
 
@@ -17,7 +20,7 @@ public interface ShopService {
      * @param shop 要创建的店铺
      * @return 操作结果
      */
-    boolean createShop(Shop shop);
+    boolean createShop(Shop shop) throws UserServiceException, ShopException;
 
     /**
      * TODO 更新店铺信息
@@ -27,7 +30,7 @@ public interface ShopService {
      * @param user        操作人
      * @return 操作结果
      */
-    boolean updateShopInfo(Shop newShopInfo, User user);
+    boolean updateShopInfo(Shop newShopInfo, User user) throws ShopException;
 
     /**
      * TODO 通过所有者id获取店铺信息
@@ -35,7 +38,15 @@ public interface ShopService {
      * @param ownerId 店铺所有者id
      * @return 店铺实体
      */
-    Shop getByOwner(Long ownerId);
+    Shop getByOwner(Long ownerId) throws ShopException;
+
+    /**
+     * TODO 通过id获取店铺信息
+     *
+     * @param Id 店铺id
+     * @return 店铺实体
+     */
+    Shop getById(Long Id) throws ShopException;
 
     /**
      * TODO 分页查询店铺
@@ -45,7 +56,7 @@ public interface ShopService {
      * @param pageSize 每页大小
      * @return 查询结果列表
      */
-    List<Shop> searchShop(String keyword, int page, int pageSize);
+    List<Shop> searchShop(String keyword, int page, int pageSize) throws ShopException;
 
     /**
      * TODO 分页列出所有被禁用店铺
@@ -55,7 +66,7 @@ public interface ShopService {
      * @param pageSize 每页大小
      * @return 店铺列表
      */
-    List<Shop> listLockShop(int page, int pageSize);
+    List<Shop> listLockShop(int page, int pageSize) throws ShopException;
 
     /**
      * TODO 店铺封禁
@@ -65,7 +76,7 @@ public interface ShopService {
      * @param operator 操作员
      * @return 返回操作执行结果
      */
-    boolean shopLock(Shop shop, User operator);
+    boolean shopLock(Shop shop, User operator) throws UserServiceException, ShopException;
 
     /**
      * TODO 店铺解封
@@ -75,6 +86,14 @@ public interface ShopService {
      * @param operator 操作员
      * @return 返回操作执行结果
      */
-    boolean shopUnLock(Shop shop, User operator);
+    boolean shopUnLock(Shop shop, User operator) throws UserServiceException, ShopException;
 
+    /**
+     * TODO 获取全部销售类型列表
+     *
+     * @return 销售类型列表
+     */
+    List<Saletype> getAllSaleType();
+
+    List<Shop> listAll();
 }

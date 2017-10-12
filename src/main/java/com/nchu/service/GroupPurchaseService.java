@@ -3,6 +3,8 @@ package com.nchu.service;
 import com.nchu.entity.GroupPurchase;
 import com.nchu.entity.Saletype;
 import com.nchu.entity.User;
+import com.nchu.exception.GoodsException;
+import com.nchu.exception.GroupPurchaseException;
 
 import java.util.List;
 
@@ -32,7 +34,7 @@ public interface GroupPurchaseService {
      * @param groupPurchase 团购活动
      * @return 操作结果
      */
-    boolean joinGroup(User user, GroupPurchase groupPurchase);
+    boolean joinGroup(User user, GroupPurchase groupPurchase) throws GroupPurchaseException;
 
     /**
      * TODO 退出团购
@@ -42,7 +44,7 @@ public interface GroupPurchaseService {
      * @param groupPurchase 团购活动
      * @return 操作结果
      */
-    boolean exitGroup(User user, GroupPurchase groupPurchase);
+    boolean exitGroup(User user, GroupPurchase groupPurchase) throws GroupPurchaseException;
 
     /**
      * TODO 获取所有参团用户
@@ -74,7 +76,7 @@ public interface GroupPurchaseService {
      * @param pageSize 每页大小
      * @return 团购活动列表
      */
-    List<GroupPurchase> searchByGoods(String keywords, int page, int pageSize);
+    List<GroupPurchase> searchByGoods(String keywords, int page, int pageSize) throws GoodsException;
 
     /**
      * TODO 通过商品类型获取团购
@@ -96,6 +98,9 @@ public interface GroupPurchaseService {
      */
     List<GroupPurchase> listAllGroup(int page, int pageSize);
 
+
+    Long groupPageAccount(int pageSize);
+
     /**
      * TODO 获取参团人数前top名的团购活动
      * 用户首页展示和用户推荐
@@ -104,4 +109,6 @@ public interface GroupPurchaseService {
      * @return 团购活动列表
      */
     List<GroupPurchase> topGroup(int top);
+
+    GroupPurchase getById(Long groupId);
 }

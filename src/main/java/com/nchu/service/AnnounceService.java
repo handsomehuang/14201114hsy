@@ -2,6 +2,7 @@ package com.nchu.service;
 
 import com.nchu.entity.Announcement;
 import com.nchu.entity.User;
+import com.nchu.exception.AnnouncementException;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface AnnounceService {
      * @param operator     操作
      * @return 操作结果
      */
-    boolean addAnnounceMent(Announcement announcement, User operator);
+    boolean addAnnounceMent(Announcement announcement, User operator) throws AnnouncementException;
 
     /**
      * TODO 获取全部公告
@@ -37,7 +38,7 @@ public interface AnnounceService {
      * @param operator     操作人
      * @return 操作结果
      */
-    boolean deleteAnnouncement(Announcement announcement, User operator);
+    boolean deleteAnnouncement(Announcement announcement, User operator) throws AnnouncementException;
 
 
 }

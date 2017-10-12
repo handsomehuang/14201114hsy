@@ -1,9 +1,12 @@
 package com.nchu.service;
 
-import com.nchu.entity.Goods;
-import com.nchu.entity.Order;
-import com.nchu.entity.OrderStatus;
-import com.nchu.entity.User;
+import com.nchu.entity.*;
+import com.nchu.enumdef.OrderStatus;
+import com.nchu.enumdef.PaymentMethod;
+import com.nchu.exception.OrderException;
+import com.nchu.exception.ShopException;
+import com.nchu.exception.UserServiceException;
+import com.nchu.exception.VouchersException;
 
 import java.util.List;
 
@@ -19,7 +22,7 @@ public interface OrderService {
      * @param order 　订单实体
      * @return 操作结果
      */
-    boolean createOrder(Order order);
+    boolean createOrder(Order order) throws OrderException;
 
     /**
      * TODO 获取用户指定状态的全部订单
@@ -30,7 +33,7 @@ public interface OrderService {
      * @param pageSize 页面大小
      * @return 订单列表
      */
-    List<Order> listUserOrders(User user, OrderStatus status, int page, int pageSize);
+    List<Order> listUserOrders(User user, OrderStatus status, int page, int pageSize) throws OrderException;
 
     /**
      * TODO 订单支付
@@ -40,18 +43,28 @@ public interface OrderService {
      * @param user  用户
      * @return 操作结果
      */
-    boolean payment(Order order, User user);
+    boolean payment(Order order, User user, PaymentMethod paymentMethod, Vouchers vouchers) throws OrderException, VouchersException, UserServiceException;
 
     /**
      * TODO 交易取消
-     * 判断订单状态,只有未支付\未收货的订单可以取消
+     * 判断订单状态
      * 订单用户需与操作者相同,取消完成后返回用户支付金额
      *
      * @param order    要取消的订单
      * @param operator 操作者
      * @return 操作结果
      */
-    boolean orderCancel(Order order, User operator);
+    boolean orderCancel(Order order, User operator) throws OrderException;
+
+    /**
+     * TODO 更新 订单状态
+     * 主要用于商家发货,用户收货等操作
+     *
+     * @param order       订单
+     * @param orderStatus 订单新状态
+     * @return 操作结果
+     */
+    boolean updateOrderStatus(Order order, OrderStatus orderStatus) throws OrderException;
 
     /**
      * TODO 取消所有某一件商品的已支付但未收货订单
@@ -61,7 +74,7 @@ public interface OrderService {
      * @param goods 商品,至少包含商品id
      * @return 操作结果
      */
-    boolean cancelAllOrder(Goods goods);
+    boolean cancelAllOrder(Goods goods) throws OrderException;
 
     /**
      * TODO 订单退款
@@ -69,6 +82,16 @@ public interface OrderService {
      * @param orderList 要退款的订单列表
      * @return 操作结果
      */
-    boolean refund(List<Order> orderList);
+    boolean refund(List<Order> orderList) throws OrderException;
 
+    /**
+     * TODO 获取一家店铺的全部指定状态订单
+     *
+     * @param shop        店铺
+     * @param orderStatus 订单状态
+     * @param page        页码
+     * @param pageSize    页面大小,如果小于0则不分页
+     * @return 订单列表
+     */
+    List<Order> getShopOrders(Shop shop, OrderStatus orderStatus, int page, int pageSize) throws ShopException, OrderException;
 }

@@ -1,11 +1,10 @@
 package com.nchu.entity;
 
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -17,6 +16,8 @@ import java.util.Set;
  * 用户表对应实体类
  */
 @Entity
+/*配置转换为json对象时要忽略的属性,防止hibernate触发懒加载导致递归查询*/
+@JsonIgnoreProperties({"favorites", "orders", "participateGroups", "msgBox", "sendMsgBox", "vouchers", "idCard", "gmtCreate", "gmtModified"})
 @DynamicInsert
 @DynamicUpdate
 public class User implements Serializable {
@@ -34,6 +35,7 @@ public class User implements Serializable {
     private String headportrait;
     private boolean sex;
     private Date birthday;
+    private String idCard;
     private String role;
     private Boolean islocked;
     private long integral;
@@ -133,7 +135,8 @@ public class User implements Serializable {
     }
 
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     public Long getId() {
         return id;
     }
@@ -153,7 +156,9 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "password", nullable = false, length = 25)
+    @Column(name = "password", length = 25)
+    /*忽略password字段防止密码泄露到前端,但是不忽略set方法,使前端密码可以传到后端*/
+    //@JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -163,7 +168,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "relname", nullable = true, length = 20)
+    @Column(name = "relname", length = 20)
     public String getRelname() {
         return relname;
     }
@@ -183,7 +188,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "email", nullable = false, length = 255)
+    @Column(name = "email", length = 255)
     public String getEmail() {
         return email;
     }
@@ -193,7 +198,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "telephone", nullable = false, length = 20)
+    @Column(name = "telephone", length = 20)
     public String getTelephone() {
         return telephone;
     }
@@ -230,6 +235,16 @@ public class User implements Serializable {
 
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
+    }
+
+    @Basic
+    @Column(name = "idCard")
+    public String getIdCard() {
+        return idCard;
+    }
+
+    public void setIdCard(String idCard) {
+        this.idCard = idCard;
     }
 
     @Basic
@@ -273,7 +288,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "gmt_create", nullable = false)
+    @Column(name = "gmt_create")
     public Timestamp getGmtCreate() {
         return gmtCreate;
     }
@@ -283,7 +298,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "gmt_modified", nullable = false)
+    @Column(name = "gmt_modified")
     public Timestamp getGmtModified() {
         return gmtModified;
     }
@@ -293,7 +308,7 @@ public class User implements Serializable {
     }
 
     @Basic
-    @Column(name = "checkcode", nullable = false, length = 255)
+    @Column(name = "checkcode", length = 255)
     public String getCheckcode() {
         return checkcode;
     }
@@ -325,13 +340,15 @@ public class User implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof User)) return false;
+
         User user = (User) o;
-        if (id != user.id) return false;
+
         if (sex != user.sex) return false;
         if (integral != user.integral) return false;
         if (isVerification != user.isVerification) return false;
         if (isLogin != user.isLogin) return false;
+        if (id != null ? !id.equals(user.id) : user.id != null) return false;
         if (account != null ? !account.equals(user.account) : user.account != null) return false;
         if (password != null ? !password.equals(user.password) : user.password != null) return false;
         if (relname != null ? !relname.equals(user.relname) : user.relname != null) return false;
@@ -340,18 +357,27 @@ public class User implements Serializable {
         if (telephone != null ? !telephone.equals(user.telephone) : user.telephone != null) return false;
         if (headportrait != null ? !headportrait.equals(user.headportrait) : user.headportrait != null) return false;
         if (birthday != null ? !birthday.equals(user.birthday) : user.birthday != null) return false;
+        if (idCard != null ? !idCard.equals(user.idCard) : user.idCard != null) return false;
         if (role != null ? !role.equals(user.role) : user.role != null) return false;
         if (islocked != null ? !islocked.equals(user.islocked) : user.islocked != null) return false;
         if (balance != null ? !balance.equals(user.balance) : user.balance != null) return false;
         if (gmtCreate != null ? !gmtCreate.equals(user.gmtCreate) : user.gmtCreate != null) return false;
         if (gmtModified != null ? !gmtModified.equals(user.gmtModified) : user.gmtModified != null) return false;
         if (checkcode != null ? !checkcode.equals(user.checkcode) : user.checkcode != null) return false;
-        return true;
+        if (receivingAddress != null ? !receivingAddress.equals(user.receivingAddress) : user.receivingAddress != null)
+            return false;
+        if (favorites != null ? !favorites.equals(user.favorites) : user.favorites != null) return false;
+        if (orders != null ? !orders.equals(user.orders) : user.orders != null) return false;
+        if (participateGroups != null ? !participateGroups.equals(user.participateGroups) : user.participateGroups != null)
+            return false;
+        if (MsgBox != null ? !MsgBox.equals(user.MsgBox) : user.MsgBox != null) return false;
+        if (SendMsgBox != null ? !SendMsgBox.equals(user.SendMsgBox) : user.SendMsgBox != null) return false;
+        return vouchers != null ? vouchers.equals(user.vouchers) : user.vouchers == null;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
+        int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (account != null ? account.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (relname != null ? relname.hashCode() : 0);
@@ -361,6 +387,7 @@ public class User implements Serializable {
         result = 31 * result + (headportrait != null ? headportrait.hashCode() : 0);
         result = 31 * result + (sex ? 1 : 0);
         result = 31 * result + (birthday != null ? birthday.hashCode() : 0);
+        result = 31 * result + (idCard != null ? idCard.hashCode() : 0);
         result = 31 * result + (role != null ? role.hashCode() : 0);
         result = 31 * result + (islocked != null ? islocked.hashCode() : 0);
         result = 31 * result + (int) (integral ^ (integral >>> 32));
@@ -370,6 +397,13 @@ public class User implements Serializable {
         result = 31 * result + (checkcode != null ? checkcode.hashCode() : 0);
         result = 31 * result + (isVerification ? 1 : 0);
         result = 31 * result + (isLogin ? 1 : 0);
+        result = 31 * result + (receivingAddress != null ? receivingAddress.hashCode() : 0);
+        result = 31 * result + (favorites != null ? favorites.hashCode() : 0);
+        result = 31 * result + (orders != null ? orders.hashCode() : 0);
+        result = 31 * result + (participateGroups != null ? participateGroups.hashCode() : 0);
+        result = 31 * result + (MsgBox != null ? MsgBox.hashCode() : 0);
+        result = 31 * result + (SendMsgBox != null ? SendMsgBox.hashCode() : 0);
+        result = 31 * result + (vouchers != null ? vouchers.hashCode() : 0);
         return result;
     }
 }

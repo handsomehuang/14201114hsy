@@ -1,16 +1,27 @@
 package com.nchu.service.impl;
 
+import com.nchu.dao.AnnouncementDao;
 import com.nchu.entity.Announcement;
 import com.nchu.entity.User;
+import com.nchu.enumdef.UserRoleType;
+import com.nchu.exception.AnnouncementException;
 import com.nchu.service.AnnounceService;
 
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 2017-9-24 15:28:16
  * 系统公告相关业务接口实现类
  */
+@Service
 public class AnnounceServiceImpl implements AnnounceService {
+
+    @Autowired
+    AnnouncementDao ad;
+
     /**
      * TODO 发布公告
      * 验证操作人身份为管理员
@@ -20,8 +31,16 @@ public class AnnounceServiceImpl implements AnnounceService {
      * @return 操作结果
      */
     @Override
-    public boolean addAnnounceMent(Announcement announcement, User operator) {
-        return false;
+    public boolean addAnnounceMent(Announcement announcement, User operator) throws AnnouncementException {
+        if (Integer.valueOf(operator.getRole()) == UserRoleType.ADMIN.getIndex()) {
+            try {
+                ad.save(announcement);
+                return true;
+            } catch (Exception e) {
+                throw new AnnouncementException("公告发布异常");
+            }
+        } else
+            throw new AnnouncementException("公告发布非法操作者");
     }
 
     /**
@@ -33,7 +52,7 @@ public class AnnounceServiceImpl implements AnnounceService {
      */
     @Override
     public List<Announcement> listAll(int page, int pageSize) {
-        return null;
+        return ad.searchPage(null, page, pageSize);
     }
 
     /**
@@ -45,7 +64,15 @@ public class AnnounceServiceImpl implements AnnounceService {
      * @return 操作结果
      */
     @Override
-    public boolean deleteAnnouncement(Announcement announcement, User operator) {
-        return false;
+    public boolean deleteAnnouncement(Announcement announcement, User operator) throws AnnouncementException {
+        if (Integer.valueOf(operator.getRole()) == UserRoleType.ADMIN.getIndex()) {
+            try {
+                ad.deleteObject(announcement);
+                return true;
+            } catch (Exception e) {
+                throw new AnnouncementException("删除公告异常");
+            }
+        } else
+            throw new AnnouncementException("删除公告非法操作者");
     }
 }

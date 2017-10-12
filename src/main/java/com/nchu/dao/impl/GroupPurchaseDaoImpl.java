@@ -130,8 +130,10 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public Long countAll() {
-        String sql = "select count(*) from GroupPurchase ";
-        Long count = (Long) getSession().createQuery(sql).uniqueResult();
+        String sql = "select count(*) from GroupPurchase where end_time >:now";
+        Query query = getSession().createQuery(sql);
+        query.setTimestamp("now", DateUtil.getCurrentTime());
+        Long count = (Long) query.uniqueResult();
         return count;
     }
 
@@ -269,8 +271,9 @@ public class GroupPurchaseDaoImpl implements GroupPurchaseDao {
      */
     @Override
     public List<GroupPurchase> listAllTop(int top) {
-        String hql = "from GroupPurchase order by numberPart DESC";
+        String hql = "from GroupPurchase where end_time > :now order by numberPart DESC";
         Query query = getSession().createQuery(hql);
+        query.setTimestamp("now", DateUtil.getCurrentTime());
         query.setFirstResult(0);
         query.setMaxResults(top);
         return query.list();

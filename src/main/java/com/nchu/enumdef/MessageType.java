@@ -6,9 +6,9 @@ package com.nchu.enumdef;
  */
 public enum MessageType {
     /**
-     * @SYSTEM 系统消息
-     * @CUNSTOMER 用户信息
-     * @ALL 全部消息
+     * SYSTEM 系统消息
+     * CUNSTOMER 用户信息
+     * ALL 全部消息
      */
     SYSTEM(0), CUSTOMER(1), ALL(2);
     private int index;

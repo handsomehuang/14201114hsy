@@ -1,12 +1,12 @@
 package com.nchu.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -19,6 +19,7 @@ import java.util.Set;
 @Table(name = "group_purchase")
 @DynamicInsert
 @DynamicUpdate
+@JsonIgnoreProperties(value = {"user", "participateGroup", "gmtCreate", "gmtModified"})
 public class GroupPurchase implements Serializable {
     /**
      *

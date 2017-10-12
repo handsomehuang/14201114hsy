@@ -3,6 +3,7 @@ package com.nchu.service;
 import com.nchu.entity.AfterSale;
 import com.nchu.entity.User;
 import com.nchu.enumdef.AfterSaleStatus;
+import com.nchu.exception.AfterSaleException;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface AfterSaleService {
      * @param afterSale 售后请求记录
      * @return 操作结果
      */
-    boolean createAfterSale(AfterSale afterSale);
+    boolean createAfterSale(AfterSale afterSale) throws AfterSaleException;
 
     /**
      * TODO 取消售后请求
@@ -29,17 +30,17 @@ public interface AfterSaleService {
      * @param operator  操作人
      * @return 操作结果
      */
-    boolean cancelService(AfterSale afterSale, User operator);
+    boolean cancelService(AfterSale afterSale, User operator) throws AfterSaleException;
 
     /**
      * TODO 列出指定条件的售后记录
      *
      * @param afterSaleStatus 售后请求状态
-     * @param page            页码
-     * @param pageIndex       每页大小
+     * @param pageIndex            页码
+     * @param pageSize       每页大小
      * @return 售后请求记录
      */
-    List<AfterSale> listAfterSale(AfterSaleStatus afterSaleStatus, int page, int pageIndex);
+    List<AfterSale> listAfterSale(AfterSaleStatus afterSaleStatus, int pageIndex, int pageSize);
 
     /**
      * TODO 处理售后请求
@@ -50,5 +51,5 @@ public interface AfterSaleService {
      * @param operator  操作者
      * @return 操作结果
      */
-    boolean handleAfterSale(AfterSale afterSale, User operator);
+    boolean handleAfterSale(AfterSale afterSale, User operator) throws AfterSaleException;
 }

@@ -1,5 +1,6 @@
 package com.nchu.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -15,6 +16,7 @@ import java.sql.Timestamp;
 @Entity
 @DynamicInsert
 @DynamicUpdate
+@JsonIgnoreProperties({"user", "gmtModified"})
 public class Vouchers implements Serializable {
     /**
      *

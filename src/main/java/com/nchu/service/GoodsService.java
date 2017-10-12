@@ -3,6 +3,7 @@ package com.nchu.service;
 import com.nchu.entity.Goods;
 import com.nchu.entity.Shop;
 import com.nchu.entity.User;
+import com.nchu.exception.GoodsException;
 
 import java.util.List;
 
@@ -21,7 +22,15 @@ public interface GoodsService {
      * @param operator 操作人
      * @return 操作结果
      */
-    boolean addGoods(Goods goods, User operator);
+    boolean addGoods(Goods goods, User operator) throws GoodsException;
+
+    /**
+     * TODO 通过id获取商品
+     *
+     * @param id 商品id
+     * @return 商品实体
+     */
+    Goods getById(Long id);
 
     /**
      * TODO 修改商品信息
@@ -31,8 +40,15 @@ public interface GoodsService {
      * @param operator 操作人
      * @return 操作结果
      */
-    boolean updateGoodsInfo(Goods goods, User operator);
+    boolean updateGoodsInfo(Goods goods, User operator) throws GoodsException;
 
+    /**
+     * TODO 更新商品库存
+     *
+     * @param goods 新商品信息
+     * @return 操作结果
+     */
+    boolean updateInventory(Goods goods);
 
     /**
      * TODO 关键字商品查询
@@ -53,7 +69,7 @@ public interface GoodsService {
      * @param operator 操作者
      * @return 操作结果
      */
-    boolean deleteGoods(Goods goods, User operator);
+    boolean deleteGoods(Goods goods, User operator) throws GoodsException;
 
     /**
      * TODO 获取店铺中的所有上架/下架商品
@@ -76,7 +92,7 @@ public interface GoodsService {
      * @param operator
      * @return
      */
-    boolean shelveGoods(Shop shop, Goods goods, User operator);
+    boolean shelveGoods(Shop shop, Goods goods, User operator) throws GoodsException;
 
     /**
      * TODO 下架店铺中的全部商品
@@ -86,5 +102,5 @@ public interface GoodsService {
      * @param operator 操作人
      * @return 操作结果
      */
-    boolean shelveAll(Shop shop, User operator);
+    boolean shelveAll(Shop shop, User operator) throws GoodsException;
 }

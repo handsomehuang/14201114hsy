@@ -3,6 +3,7 @@ package com.nchu.service;
 import com.nchu.entity.Evaluation;
 import com.nchu.entity.Goods;
 import com.nchu.entity.User;
+import com.nchu.exception.EvaluationException;
 
 import java.util.List;
 
@@ -37,6 +38,6 @@ public interface EvaluationService {
      * @param operator 操作员,必须是管理员
      * @return 操作结果
      */
-    boolean clearAllEvaluation(Goods goods, User operator);
+    boolean clearAllEvaluation(Goods goods, User operator) throws EvaluationException;
 
 }

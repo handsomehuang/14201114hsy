@@ -58,6 +58,9 @@ public class MD5Util {
      * @return 匹配返回true，不匹配返回false
      */
     public static boolean validate(String unknown, String okHex) {
+        if (unknown == null) {
+            return false;
+        }
         return okHex.equals(encode2hex(unknown));
     }
 }

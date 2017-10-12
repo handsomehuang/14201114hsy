@@ -31,21 +31,22 @@
     </tx:advice>
 
     <!--配置静态文件路径-->
-    <mvc:resources mapping="/images/**" location="/WEB-INF/res/images/"/>
+    <mvc:resources mapping="/img/**" location="/WEB-INF/res/img/"/>
     <mvc:resources mapping="/css/**" location="/WEB-INF/res/css/"/>
     <mvc:resources mapping="/js/**" location="/WEB-INF/res/js/"/>
     <mvc:resources mapping="/favicon.ico" location="/WEB-INF/res/icon/"/>
 
     <!--配置html视图解析器-->
     <bean id="templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver"
-          p:prefix="/WEB-INF/view/" p:cacheable="true" p:suffix=".html" p:templateMode="HTML5"
-          p:characterEncoding="UTF-8" p:order="1">
+          p:prefix="/WEB-INF/view/" p:cacheable="false" p:suffix=".html" p:templateMode="HTML5"
+          p:characterEncoding="UTF-8">
         <constructor-arg ref="servletContext"/>
     </bean>
 
     <bean id="viewResolver" class="org.thymeleaf.spring4.view.ThymeleafViewResolver"
-          p:templateEngine-ref="templateEngine" p:characterEncoding="UTF-8" p:order="3"/>
+          p:templateEngine-ref="templateEngine" p:characterEncoding="UTF-8"/>
     <!--使用thymeleaf模板进行html解析-->
     <bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine"
           p:templateResolver-ref="templateResolver"/>
+    <bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
 </beans>

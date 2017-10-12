@@ -1,5 +1,6 @@
 package com.nchu.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -15,6 +16,7 @@ import java.sql.Timestamp;
 @Table(name = "receiving_address")
 @DynamicInsert
 @DynamicUpdate
+@JsonIgnoreProperties(value = {"user", "gmtCreate", "gmtModified"})
 public class ReceivingAddress implements Serializable {
     /**
      *

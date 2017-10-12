@@ -1,0 +1,26 @@
+<link rel="stylesheet" type="text/css" href="/js/iview/styles/iview.css">
+<div style="background-color: #f8f8f9;max-height: 80px;" id="footer">
+    <div style="border: solid 1px #e9eaec;width: 90%;margin-left: 5%"></div>
+    <row class="footer">
+        <i-col :lg="{span:7,offset:9}" :xs="{span:13,offset:6}">
+            <a style="color: #80848f">关于网站</a>&nbsp;
+            <a style="color: #80848f">帮助中心</a>&nbsp;
+            <a style="color: #80848f">开放平台</a>&nbsp;
+            <a style="color: #80848f">联系我们</a>&nbsp;
+            <a style="color: #80848f">网站合作</a>&nbsp;
+            <a style="color: #80848f">法律声明及隐私权政策</a>
+        </i-col>
+    </row>
+    <row style="margin-top: 10px">
+        <i-col :lg="{span:7,offset:10}" :xs="{span:13,offset:6}" style="color: #80848f">Copyright © 2017 &nbsp;&nbsp;
+            版权所有 NCHU
+        </i-col>
+    </row>
+</div>
+<script type="text/javascript" src="/js/vue/vue.js"></script>
+<script type="text/javascript" src="/js/iview/iview.js"></script>
+<script type="text/javascript">
+    var footer = new Vue({
+        el: '#footer'
+    });
+</script>

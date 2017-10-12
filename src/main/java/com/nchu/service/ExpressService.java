@@ -2,6 +2,7 @@ package com.nchu.service;
 
 import com.nchu.entity.ExpressDelivery;
 import com.nchu.entity.User;
+import com.nchu.exception.ExpressException;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ public interface ExpressService {
      * @param operator        操作员,限定管理员
      * @return 操作结果
      */
-    boolean addExpress(ExpressDelivery expressDelivery, User operator);
+    boolean addExpress(ExpressDelivery expressDelivery, User operator) throws ExpressException;
 
     /**
      * TODO 删除快递方式
@@ -49,7 +50,7 @@ public interface ExpressService {
      * @param operator        操作员,限定管理员
      * @return 操作结果
      */
-    boolean deleteExpress(ExpressDelivery expressDelivery, User operator);
+    boolean deleteExpress(ExpressDelivery expressDelivery, User operator) throws ExpressException;
 
     /**
      * TODO 更新快递方式信息
@@ -58,5 +59,5 @@ public interface ExpressService {
      * @param operator        操作员,限定管理员
      * @return 操作结果
      */
-    boolean updateExpress(ExpressDelivery expressDelivery, User operator);
+    boolean updateExpress(ExpressDelivery expressDelivery, User operator) throws ExpressException;
 }

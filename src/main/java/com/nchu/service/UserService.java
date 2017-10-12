@@ -2,7 +2,9 @@ package com.nchu.service;
 
 import com.nchu.entity.User;
 import com.nchu.enumdef.UserRoleType;
+import com.nchu.exception.UserServiceException;
 
+import javax.mail.MessagingException;
 import java.util.List;
 
 /**
@@ -18,7 +20,7 @@ public interface UserService {
      * @param user 要登录的用户
      * @return 返回登录成功的用户(登录失败请返回null)
      */
-    User login(User user);
+    User login(User user) throws UserServiceException;
 
     /**
      * TODO 用户注销
@@ -37,7 +39,7 @@ public interface UserService {
      * @param user 要注册的用户
      * @return 返回插入执行结果
      */
-    boolean register(User user);
+    boolean register(User user) throws UserServiceException, MessagingException;
 
     /**
      * TODO 获取用户信息
@@ -46,7 +48,7 @@ public interface UserService {
      * @param id 用户账号id
      * @return 返回用户实体
      */
-    User getIdById(Long id);
+    User getUserById(Long id);
 
     /**
      * TODO 获取用户信息
@@ -55,7 +57,7 @@ public interface UserService {
      * @param account 用户账号
      * @return 返回用户实体
      */
-    User getIdByAccount(String account);
+    User getUserByAccount(String account) throws UserServiceException;
 
     /**
      * TODO 用户分页查询
@@ -71,12 +73,13 @@ public interface UserService {
     /**
      * TODO 用户信息修改
      * 传入用户实体完成个人信息数据修改,
-     * 禁止通过该方法修改用户密码,如果user对象的password属性不为空则禁止继续执行
+     * 禁止通过该方法修改用户密码
      *
      * @param user 要修改信息的用户
      * @return 返回操作结果
      */
-    boolean updateUserInfo(User user);
+    boolean updateUserInfo(User user) throws UserServiceException;
+
     /**
      * TODO 账号密码修改
      * 校验新密码的安全合法性,判断是否与旧密码相同,修改用户账户密码
@@ -85,7 +88,7 @@ public interface UserService {
      * @param newPassword 新密码
      * @return 返回操作结果
      */
-    boolean changePassword(User user, String newPassword);
+    boolean changePassword(User user, String newPassword) throws UserServiceException;
 
     /**
      * TODO 用户账户认证
@@ -96,7 +99,7 @@ public interface UserService {
      * @param checkCode 校验码
      * @return 返回校验结果
      */
-    boolean Authentication(User user, String email, String checkCode);
+    boolean Authentication(User user, String email, String checkCode) throws UserServiceException;
 
     /**
      * TODO 用户账户封禁
@@ -107,7 +110,7 @@ public interface UserService {
      * @param operator 执行操作的管理员
      * @return 返回数据库操作结果
      */
-    boolean userLock(Long id, User operator);
+    boolean userLock(Long id, User operator) throws UserServiceException;
 
     /**
      * TODO 用户账户解禁
@@ -118,7 +121,7 @@ public interface UserService {
      * @param operator 执行操作的管理员
      * @return 返回数据库操作结果
      */
-    boolean userUnLock(Long id, User operator);
+    boolean userUnLock(Long id, User operator) throws UserServiceException;
 
     /**
      * TODO 列出所有被冻结的账号
